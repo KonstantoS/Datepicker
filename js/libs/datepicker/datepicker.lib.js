@@ -297,6 +297,7 @@ var Datepicker = (function(){
     public.set = function(element, options){
         elems = document.querySelectorAll(element);
         options.dateFormat = options.dateFormat !== undefined ? options.dateFormat : 'dd/mm/yyyy';
+        options.range = options.range !== undefined ? options.range : 'Day';
         
         for(var i=0;i<elems.length;i++){
             //For "onfocus" call
@@ -307,9 +308,12 @@ var Datepicker = (function(){
             else if(options.button === true){ //For button use
                 elems[i].removeEventListener("focus", Datepicker.show);
                 
-                btn = elems[i].nextElementSibling;
+                btn = document.createElement("span");
+                btn.className = 'pick-date-ico';
+                //btn = elems[i].nextElementSibling;
                 btn.dateButton = true;
                 btn.addEventListener("click", Datepicker.show, false);
+                elems[i].parentNode.insertBefore(btn, elems[i].nextSibling);
             }            
             elems[i].datepickerOpts = options;
         }

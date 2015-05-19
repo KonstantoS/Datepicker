@@ -9,29 +9,55 @@
         <script src="js/libs/datepicker/datepicker.lib.js"></script>
     </head>
     <body>
-        <h1>Let's see what you can!</h1>
-            Just regular ones:<br>
+        <div class='wrapp'>
+        <h1>Picknic</h1>
+        <h2>Welcome stranger!   Let's test that datepicker...</h2>
+    <div class="content">
         <div>
+            <h3>#1 Params:</h3>
+            <p>This datepicker has default parameters except viewing range</p>
+            <pre>
+Datepicker.set(".dateField",{
+    range: "Month"
+});    
+            </pre>
             <input type="text" class="dateField">
         </div>
         <div>
+            <h3>#2 Params:</h3>
+            <p>Same as previous one. Works independently!</p>
+            <pre>
+Datepicker.set(".dateField",{
+    range: "Month"
+});    
+            </pre>
             <input type="text" class="dateField">
         </div>
         <div>
+            <h3>#3 Params:</h3>
+            <p>That one has: other date format (ex: 20, May 2015), datepicker activates by button. First day is Monday.</p>
+            <pre>
+Datepicker.set("#uniqueDatepicker",{
+    dateFormat: "dd, MM yyyy", 
+    button: true,
+    firstDay: "Mon"
+});    
+            </pre>
             <input type="text" class="dateField" id="uniqueDatepicker">
-            <span class="dateButton">Btn</span>
+        </div>
+    </div>
         </div>
     </body>
     
     <script type="text/javascript">
         Datepicker.set(".dateField",{
-            range: "Month", // Could be (Day/Month/Year/YearRange)
+            range: "Month" // Could be (Day/Month/Year/YearRange)
         });
         Datepicker.set("#uniqueDatepicker",{
             range: "Day", 
             dateFormat: "dd, MM yyyy", //Could be almost anything you like using (d,m,y,M) ex: (dd-mm-yy | d, MM yyyy),
             button: true, //Using sibling button or just by focus on field
-            //firstDay: "Mon" //Or "Sun"
+            firstDay: "Mon" //Or "Sun"
         });
     </script>
 </html>

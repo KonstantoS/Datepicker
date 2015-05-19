@@ -135,3 +135,11 @@
 #pick-today:hover{
     background: #e8736f;
 }
+.pick-date-ico{
+    display: inline-block;
+    width: 20px;
+    height:17px;
+    background:url('date-ico.png') no-repeat;
+    background-size: contain;
+    cursor:pointer;
+}
