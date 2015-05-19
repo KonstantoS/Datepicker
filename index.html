@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Datepicker test page</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="js/libs/datepicker/datepicker.style.css">
+        <script src="js/libs/datepicker/datepicker.lib.js"></script>
+    </head>
+    <body>
+        <h1>Let's see what you can!</h1>
+            Just regular ones:<br>
+        <div>
+            <input type="text" class="dateField">
+        </div>
+        <div>
+            <input type="text" class="dateField">
+        </div>
+        <div>
+            <input type="text" class="dateField" id="uniqueDatepicker">
+            <span class="dateButton">Btn</span>
+        </div>
+    </body>
+    
+    <script type="text/javascript">
+        Datepicker.set(".dateField",{
+            range: "Month", // Could be (Day/Month/Year/YearRange)
+        });
+        Datepicker.set("#uniqueDatepicker",{
+            range: "Day", 
+            dateFormat: "dd, MM yyyy", //Could be almost anything you like using (d,m,y,M) ex: (dd-mm-yy | d, MM yyyy),
+            button: true, //Using sibling button or just by focus on field
+            //firstDay: "Mon" //Or "Sun"
+        });
+    </script>
+</html>
