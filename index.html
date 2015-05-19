@@ -10,28 +10,31 @@
     </head>
     <body>
         <div class='wrapp'>
-        <h1>Picknic</h1>
+        <h1>Picknic.date</h1>
         <h2>Welcome stranger!   Let's test that datepicker...</h2>
     <div class="content">
         <div>
             <h3>#1 Params:</h3>
-            <p>This datepicker has default parameters except viewing range</p>
+            <p>This datepicker has default parameters except viewing range.</p>
             <pre>
 Datepicker.set(".dateField",{
     range: "Month"
 });    
             </pre>
+            Here is two independent fields:<br>
+            <input type="text" class="dateField">
             <input type="text" class="dateField">
         </div>
         <div>
             <h3>#2 Params:</h3>
             <p>Same as previous one. Works independently!</p>
             <pre>
-Datepicker.set(".dateField",{
-    range: "Month"
+Datepicker.set(".yearRanged",{
+    range: "Year",
+    dateFormat: "dd-mm-yyyy"
 });    
             </pre>
-            <input type="text" class="dateField">
+            <input type="text" class="yearRanged" value='20-05-2015'>
         </div>
         <div>
             <h3>#3 Params:</h3>
@@ -53,9 +56,13 @@ Datepicker.set("#uniqueDatepicker",{
         Datepicker.set(".dateField",{
             range: "Month" // Could be (Day/Month/Year/YearRange)
         });
+        Datepicker.set(".yearRanged",{
+            range: "Year",
+            dateFormat: "dd-mm-yyyy"
+        });
         Datepicker.set("#uniqueDatepicker",{
             range: "Day", 
-            dateFormat: "dd, MM yyyy", //Could be almost anything you like using (d,m,y,M) ex: (dd-mm-yy | d, MM yyyy),
+            dateFormat: "dd, MM yyyy", //Could be almost anything you like using (d,m,y,M) ex: (dd-mm-yyyy | d, MM yyyy),
             button: true, //Using sibling button or just by focus on field
             firstDay: "Mon" //Or "Sun"
         });

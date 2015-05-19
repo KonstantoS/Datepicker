@@ -3,7 +3,7 @@
  * @author: KonstantoS
  * Settings:
  *  range: "Day|Month|Year", //Displaing range of elements
-    dateFormat: "dd, MM yyyy", //Could be almost anything you like using (dd|mm|yyyy|yy|MM) ex: (dd-mm-yy | d, MM yyyy),
+    dateFormat: "dd, MM yyyy", //Could be almost anything you like using (dd|mm|yyyy|MM) ex: (dd-mm-yyyy | d, MM yyyy),
     button: true|false, //Using sibling button or just by focus on field
     firstDay: "Mon|Sun" 
  *

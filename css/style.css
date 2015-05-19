@@ -12,6 +12,9 @@ h1{
     font-weight:100;
     margin: 0;
 }
+h2{
+    margin:0;
+}
 .wrapp{
     width: 80%;
     margin: 0 auto;
@@ -31,6 +34,7 @@ input[type="text"]{
     min-width: 155px;
     padding:5px 30px 5px 10px;
     border: none;
+    margin:10px 0;
 }
 input[type="text"] ~ .pick-date-ico{
     position:relative;
