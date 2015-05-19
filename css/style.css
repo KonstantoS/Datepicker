@@ -27,7 +27,7 @@ h2{
     display: table-cell;
     width:25%;
     min-height:500px;
-    vertical-align: bottom;
+    vertical-align: top;
     padding:10px;
 }
 input[type="text"]{
