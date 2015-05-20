@@ -1,12 +1,12 @@
 @font-face {
-    font-family: 'Laaato';
+    font-family: 'LatoLight';
     src: url('http://proart.in.ua/includes/fonts/Lato-Light.woff') format('woff'), /* Modern Browsers */
          url('http://proart.in.ua/includes/fonts/Lato-Light.ttf') format('truetype'); 
     font-style: normal;
     font-weight: normal;
 }
 @font-face {
-    font-family: 'Late';
+    font-family: 'Lato';
     src: url('http://proart.in.ua/includes/fonts/Lato-Regular.woff') format('woff'), /* Modern Browsers */
          url('http://proart.in.ua/includes/fonts/Lato-Regular.ttf') format('truetype'); 
     font-style: normal;
@@ -21,7 +21,7 @@
     background:#323439;
     font-size: 11px;
     color:#fff;
-    font-family: Laaato, sans-serif;
+    font-family: LatoLight, sans-serif;
     display: none;
 }
 .picknic-top{
@@ -79,7 +79,7 @@
     }
     #picknic-date .pick-days th{
         text-transform: uppercase;
-        font-family: Late, sans-serif;
+        font-family: Lato, sans-serif;
     }
     #picknic-date table td{
         cursor:pointer;
