@@ -99,9 +99,9 @@ var Datepicker = (function(){
             patt = patt.replace(/\s/g,"\\s");
             return RegExp(patt);
         }
-        fullPatt = reg(pattern).toString().replace(/\//g,"");
-        fullPatt = "^"+fullPatt+"$";
-        if(!reg(fullPatt).test(string))
+        //fullPatt = reg(pattern).toString().replace(/\//g,"");
+        //fullPatt = "^"+fullPatt+"$";
+        if(!reg(pattern).test(string))
             return false;
                
         //Getting month
@@ -117,7 +117,7 @@ var Datepicker = (function(){
         }
         if(parseInt(month) < 0)
             month = 1;
-        else if(parseInt(month) < 13)
+        else if(parseInt(month) > 12)
             month = 12;
         else 
             month = parseInt(month);
@@ -127,7 +127,7 @@ var Datepicker = (function(){
         if(!/\(y{4}\)/.test(patt)){
             patt = pattern.replace(/y{2}/,"(yy)");
         }
-        year = string.replace(reg(patt),"$1");
+        year = parseInt(string.replace(reg(patt),"$1"));
         
         //Getting days
         patt = pattern.replace(/dd/,"(dd)");
@@ -422,10 +422,48 @@ var Datepicker = (function(){
             }
             return;
         }
-        else if(e.type === 'keyup' && e.keyCode !== 13 && e.keyCode !== 37 && e.keyCode !== 39 && e.target.value.length === maxLength(e.target.datepickerOpts.dateFormat)){
+        else if(e.type === 'keyup' && e.keyCode !== 13 && e.keyCode !== 37 && e.keyCode !== 39){
+            field = e.target;
             typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
+            if(e.keyCode === 38){
+                if(typedDate.day<monthParams(typedDate.month,typedDate.year).daysNum){
+                    typedDate.day++;
+                }
+                else{
+                    typedDate.day=1;
+                    if(typedDate.month<12)
+                        typedDate.month++;
+                    else{
+                        typedDate.month = 1;
+                        typedDate.year++;
+                    }
+                }
+                Datepicker.status.currOpt.date = typedDate;
+                field.value = stringDate(field.datepickerOpts.dateFormat,typedDate);
+                renderPicker();
+                return;
+            }
+            else if(e.keyCode === 40){
+                if(typedDate.day>1){
+                    typedDate.day--;
+                }
+                else{
+                    typedDate.day=monthParams(typedDate.month,typedDate.year).daysNum;
+                    if(typedDate.month>1)
+                        typedDate.month--;
+                    else{
+                        typedDate.month = 12;
+                        typedDate.year--;
+                    }
+                }
+                Datepicker.status.currOpt.date = typedDate;
+                field.value = stringDate(field.datepickerOpts.dateFormat,typedDate);
+                renderPicker();
+                return;
+            }
+            //e.target.value.length === maxLength(e.target.datepickerOpts.dateFormat)
             if(typedDate !== false){
-                Datepicker.status.currOpt.date = parseDate(field.datepickerOpts.dateFormat,field.value);
+                Datepicker.status.currOpt.date = typedDate;
                 renderPicker();
             }
             else{
