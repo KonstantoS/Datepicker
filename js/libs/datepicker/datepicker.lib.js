@@ -103,10 +103,7 @@ var Datepicker = (function(){
         fullPatt = "^"+fullPatt+"$";
         if(!reg(fullPatt).test(string))
             return false;
-        
-        //Getting days
-        patt = pattern.replace(/dd/,"(dd)");
-        day = string.replace(reg(patt),"$1");
+               
         //Getting month
         patt = pattern.replace(/mm/,"(mm)");
         patt = patt.replace(/MM/,"(MM)");
@@ -118,16 +115,30 @@ var Datepicker = (function(){
                 break;
             }
         }
+        if(parseInt(month) < 0)
+            month = 1;
+        else if(parseInt(month) < 13)
+            month = 12;
+        else 
+            month = parseInt(month);
+        
         //Getting year
         patt = pattern.replace(/y{4}/,"(yyyy)");
         if(!/\(y{4}\)/.test(patt)){
             patt = pattern.replace(/y{2}/,"(yy)");
         }
         year = string.replace(reg(patt),"$1");
+        
+        //Getting days
+        patt = pattern.replace(/dd/,"(dd)");
+        day = parseInt(string.replace(reg(patt),"$1"));
+        if(day > monthParams(month,year).daysNum)
+            day = monthParams(month,year).daysNum;
+        
         return {
-            day:parseInt(day),
-            month:parseInt(month),
-            year:parseInt(year)
+            day:day,
+            month:month,
+            year:year
         };
     }
     function maxLength(pattern){
@@ -403,14 +414,19 @@ var Datepicker = (function(){
             }
             return;
         }
-        else if(e.type === 'keyup' && e.keyCode !== 37 && e.keyCode!== 39 && field.value.length === maxLength(field.datepickerOpts.dateFormat)){
+        else if(e.type === 'keyup' && e.keyCode !== 37 && e.keyCode !== 39 && field.value.length === maxLength(field.datepickerOpts.dateFormat)){
             typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
             if(typedDate !== false){
                 Datepicker.status.currOpt.date = parseDate(field.datepickerOpts.dateFormat,field.value);
                 renderPicker();
             }
             else{
+                //Storing cursor position
+                var start = field.selectionStart,
+                end = field.selectionEnd;                
                 field.value = field.datepickerOpts.LastValidDateStr;
+                //Restoring it
+                field.setSelectionRange(start, end);
             }
             return;
         }
