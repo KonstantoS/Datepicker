@@ -407,9 +407,11 @@ var Datepicker = (function(){
     public.eventHandler = function(e){
         if(e.type === 'keydown' && e.keyCode !== 37 && e.keyCode!== 39){
             field = e.target;
+            var selectStart = field.selectionStart,
+                selectEnd = field.selectionEnd;
             field.datepickerOpts.LastValidDateStr = field.value;
             if(field.value.length === maxLength(field.datepickerOpts.dateFormat)){
-                if(textSymbols().indexOf(e.keyCode)>=0)
+                if(textSymbols().indexOf(e.keyCode)>=0 && (selectStart-selectEnd)===0)
                     e.preventDefault();
             }
             return;
@@ -422,7 +424,7 @@ var Datepicker = (function(){
             }
             else{
                 //Storing cursor position
-                var start = field.selectionStart,
+                start = field.selectionStart,
                 end = field.selectionEnd;                
                 field.value = field.datepickerOpts.LastValidDateStr;
                 //Restoring it
