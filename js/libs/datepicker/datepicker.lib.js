@@ -326,15 +326,17 @@ var Datepicker = (function(){
         options.range = options.range !== undefined ? options.range : 'Day';
         
         for(var i=0;i<elems.length;i++){
+            elems[i].addEventListener("blur", Datepicker.hide);
+            elems[i].addEventListener("keydown",Datepicker.eventHandler);
+            elems[i].addEventListener("keyup",Datepicker.eventHandler);
             //For "onfocus" call
             if(elems[i].datepickerOpts === undefined && options.button === undefined){
                 elems[i].addEventListener("focus", Datepicker.show);
-                elems[i].addEventListener("blur", Datepicker.hide);
-                elems[i].addEventListener("keydown",Datepicker.eventHandler);
-                elems[i].addEventListener("keyup",Datepicker.eventHandler);
+                elems[i].addEventListener("click", Datepicker.show);
             }
             else if(options.button === true){ //For button use
                 elems[i].removeEventListener("focus", Datepicker.show);
+                elems[i].removeEventListener("click", Datepicker.show);
                 
                 btn = document.createElement("span");
                 btn.className = 'pick-date-ico';
@@ -406,6 +408,10 @@ var Datepicker = (function(){
      */
     public.eventHandler = function(e){
         if(e.type === 'keydown' && e.keyCode !== 37 && e.keyCode!== 39){
+            if(e.keyCode === 13){
+                Datepicker.hide();
+                return;
+            }
             field = e.target;
             var selectStart = field.selectionStart,
                 selectEnd = field.selectionEnd;
@@ -416,7 +422,7 @@ var Datepicker = (function(){
             }
             return;
         }
-        else if(e.type === 'keyup' && e.keyCode !== 37 && e.keyCode !== 39 && field.value.length === maxLength(field.datepickerOpts.dateFormat)){
+        else if(e.type === 'keyup' && e.keyCode !== 13 && e.keyCode !== 37 && e.keyCode !== 39 && e.target.value.length === maxLength(e.target.datepickerOpts.dateFormat)){
             typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
             if(typedDate !== false){
                 Datepicker.status.currOpt.date = parseDate(field.datepickerOpts.dateFormat,field.value);
