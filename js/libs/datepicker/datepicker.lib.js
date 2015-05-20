@@ -319,7 +319,6 @@ var Datepicker = (function(){
             if(elems[i].datepickerOpts === undefined && options.button === undefined){
                 elems[i].addEventListener("focus", Datepicker.show);
                 elems[i].addEventListener("blur", Datepicker.hide);
-                //elems[i].addEventListener("keypress",Datepicker.eventHandler);
                 elems[i].addEventListener("keydown",Datepicker.eventHandler);
                 elems[i].addEventListener("keyup",Datepicker.eventHandler);
             }
@@ -395,24 +394,6 @@ var Datepicker = (function(){
      * Detects controller and does action
      */
     public.eventHandler = function(e){
-        /*if(e.type === 'keypress'){
-            field = e.target;
-            field.datepickerOpts.LastValidDateStr = field.value;
-            if(field.datepickerOpts.LastValidDateStr.length === maxLength(field.datepickerOpts.dateFormat)){
-                e.preventDefault();
-            }
-            else{
-                typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
-                if(typedDate !== false){
-                    Datepicker.status.currOpt.date = parseDate(field.datepickerOpts.dateFormat,field.value);
-                    renderPicker();
-                }
-                else{
-                    field.value = field.datepickerOpts.LastValidDateStr;
-                } 
-            }
-            return;
-        }*/
         if(e.type === 'keydown' && e.keyCode !== 37 && e.keyCode!== 39){
             field = e.target;
             field.datepickerOpts.LastValidDateStr = field.value;
