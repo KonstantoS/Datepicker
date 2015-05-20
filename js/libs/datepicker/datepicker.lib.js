@@ -97,18 +97,18 @@ var Datepicker = (function(){
             patt = patt.replace("yy","\\d{2}");
             patt = patt.replace("MM","[A-Za-z]{3,9}");
             patt = patt.replace(/\s/g,"\\s");
-            return RegExp(patt);
+            return patt;
         }
-        //fullPatt = reg(pattern).toString().replace(/\//g,"");
-        //fullPatt = "^"+fullPatt+"$";
-        if(!reg(pattern).test(string))
+        fullPatt = "^("+reg(pattern)+")$";
+        console.log(RegExp(fullPatt));
+        if(!RegExp(fullPatt).test(string))
             return false;
                
         //Getting month
         patt = pattern.replace(/mm/,"(mm)");
         patt = patt.replace(/MM/,"(MM)");
         
-        month = string.replace(reg(patt),"$1");
+        month = string.replace(RegExp(reg(patt)),"$1");
         for(key in MonthName){
             if(MonthName[key] === month){
                 month = parseInt(key)+1;
@@ -127,11 +127,11 @@ var Datepicker = (function(){
         if(!/\(y{4}\)/.test(patt)){
             patt = pattern.replace(/y{2}/,"(yy)");
         }
-        year = parseInt(string.replace(reg(patt),"$1"));
+        year = parseInt(string.replace(RegExp(reg(patt)),"$1"));
         
         //Getting days
         patt = pattern.replace(/dd/,"(dd)");
-        day = parseInt(string.replace(reg(patt),"$1"));
+        day = parseInt(string.replace(RegExp(reg(patt)),"$1"));
         if(day > monthParams(month,year).daysNum)
             day = monthParams(month,year).daysNum;
         
@@ -461,8 +461,8 @@ var Datepicker = (function(){
                 renderPicker();
                 return;
             }
-            //e.target.value.length === maxLength(e.target.datepickerOpts.dateFormat)
             if(typedDate !== false){
+                
                 Datepicker.status.currOpt.date = typedDate;
                 renderPicker();
             }
