@@ -99,7 +99,9 @@ var Datepicker = (function(){
             patt = patt.replace(/\s/g,"\\s");
             return RegExp(patt);
         }
-        if(!reg(pattern).test(string))
+        fullPatt = reg(pattern).toString().replace(/\//g,"");
+        fullPatt = "^"+fullPatt+"$";
+        if(!reg(fullPatt).test(string))
             return false;
         
         //Getting days
@@ -127,6 +129,19 @@ var Datepicker = (function(){
             month:parseInt(month),
             year:parseInt(year)
         };
+    }
+    function maxLength(pattern){
+        return pattern.replace(/MM/,"September").length; //Just because it is the most long :3
+    }
+    function textSymbols(){
+        arr = [];
+        for(i=48;i<91;i++) //0-9a-z
+            arr.push(i);
+        for(i=96;i<112;i++) //Numpads and other
+            arr.push(i);
+        for(i=186;i<223;i++)
+            arr.push(i);
+        return arr;
     }
     /*
      * Stringifies date by preseted pattern
@@ -304,6 +319,9 @@ var Datepicker = (function(){
             if(elems[i].datepickerOpts === undefined && options.button === undefined){
                 elems[i].addEventListener("focus", Datepicker.show);
                 elems[i].addEventListener("blur", Datepicker.hide);
+                //elems[i].addEventListener("keypress",Datepicker.eventHandler);
+                elems[i].addEventListener("keydown",Datepicker.eventHandler);
+                elems[i].addEventListener("keyup",Datepicker.eventHandler);
             }
             else if(options.button === true){ //For button use
                 elems[i].removeEventListener("focus", Datepicker.show);
@@ -377,11 +395,49 @@ var Datepicker = (function(){
      * Detects controller and does action
      */
     public.eventHandler = function(e){
+        /*if(e.type === 'keypress'){
+            field = e.target;
+            field.datepickerOpts.LastValidDateStr = field.value;
+            if(field.datepickerOpts.LastValidDateStr.length === maxLength(field.datepickerOpts.dateFormat)){
+                e.preventDefault();
+            }
+            else{
+                typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
+                if(typedDate !== false){
+                    Datepicker.status.currOpt.date = parseDate(field.datepickerOpts.dateFormat,field.value);
+                    renderPicker();
+                }
+                else{
+                    field.value = field.datepickerOpts.LastValidDateStr;
+                } 
+            }
+            return;
+        }*/
+        if(e.type === 'keydown' && e.keyCode !== 37 && e.keyCode!== 39){
+            field = e.target;
+            field.datepickerOpts.LastValidDateStr = field.value;
+            if(field.value.length === maxLength(field.datepickerOpts.dateFormat)){
+                if(textSymbols().indexOf(e.keyCode)>=0)
+                    e.preventDefault();
+            }
+            return;
+        }
+        else if(e.type === 'keyup' && e.keyCode !== 37 && e.keyCode!== 39 && field.value.length === maxLength(field.datepickerOpts.dateFormat)){
+            typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
+            if(typedDate !== false){
+                Datepicker.status.currOpt.date = parseDate(field.datepickerOpts.dateFormat,field.value);
+                renderPicker();
+            }
+            else{
+                field.value = field.datepickerOpts.LastValidDateStr;
+            }
+            return;
+        }
         evBtn = e.target;
         field = Datepicker.status.elem;
         
         if(evBtn.id !== '')
-            elName = evBtn.id;
+            elName = evBtn.id; 
         else if(evBtn.className !== '')
             elName = evBtn.className;
         else
