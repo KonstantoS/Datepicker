@@ -26,6 +26,7 @@
     font-size: 11px;
     color:#fff;
     font-family: LatoLight, sans-serif;
+    overflow: hidden;
     display: none;
 }
 .picknic-top{
@@ -43,6 +44,7 @@
         vertical-align: middle;
         margin:15px auto 7px !important;
         margin: 0 auto;
+        transition: all linear 0.3s;
     }
     .picknic-top > div{
         position: relative;

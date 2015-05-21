@@ -115,7 +115,7 @@ var Datepicker = (function(){
                 break;
             }
         }
-        if(typeof month === "string")
+        if(typeof month === "string" && /MM/.test(string)===true)
             return false;
         
         if(parseInt(month) < 0)
@@ -175,7 +175,7 @@ var Datepicker = (function(){
     /*
      * Renders view of datepicker by parametrs and ranges. 
      */
-    function renderPicker(){
+    function renderPicker(animation){
         options = Datepicker.status.currOpt; //Current option
         date = options.date; //Current options date
         selectedDate = parseDate(Datepicker.status.elem.datepickerOpts.dateFormat,Datepicker.status.elem.value); //Date, that is currently in field
@@ -200,7 +200,7 @@ var Datepicker = (function(){
             return el;
         }
         
-        table = document.createElement('table');
+        var table = document.createElement('table');
         if(options.range === 'Day'){
             /*
              * Dangerous for coder to explore this part. Too many indian styled solutions 
@@ -300,9 +300,34 @@ var Datepicker = (function(){
             }
             table.appendChild(tbody);
         }
-        
-        document.querySelector(".picknic-content").innerHTML = '';
-        document.querySelector(".picknic-content").appendChild(table);
+        function transHandler(e){
+            e.target.removeEventListener('webkitTransitionEnd', transHandler);
+            document.querySelector(".picknic-content").innerHTML = '';
+            document.querySelector(".picknic-content").appendChild(table);
+        }
+        if(typeof animation === "string"){
+            document.querySelector(".picknic-content table").addEventListener('webkitTransitionEnd', transHandler);
+            switch (animation){
+                case "scaleDown":
+                    document.querySelector(".picknic-content table").style.opacity = "0";
+                    document.querySelector(".picknic-content table").style.transform = "scale(2.0)";
+                    break;
+                case "scaleUp":
+                    document.querySelector(".picknic-content table").style.opacity = "0";
+                    document.querySelector(".picknic-content table").style.transform = "scale(0.5)";
+                    break;
+                case "shiftLeft":
+                    document.querySelector(".picknic-content table").style.transform = "translateX(-200px)";
+                    break;
+                case "shiftRight":
+                    document.querySelector(".picknic-content table").style.transform = "translateX(200px)";
+                    break;
+            }
+        }
+        else{
+            document.querySelector(".picknic-content").innerHTML = '';
+            document.querySelector(".picknic-content").appendChild(table);
+        }
     }
     /*
      * Just gets today date
@@ -492,7 +517,7 @@ var Datepicker = (function(){
         switch(elName){
             case "pick-range": //Shitch range
                 Datepicker.status.currOpt.range = (avalRanges[avalRanges.indexOf(Datepicker.status.currOpt.range)+1] !== undefined) ? avalRanges[avalRanges.indexOf(Datepicker.status.currOpt.range)+1] : Datepicker.status.currOpt.range;
-                renderPicker();
+                renderPicker("scaleUp");
                 break;
             case "pick-prevR":
                 switch (Datepicker.status.currOpt.range){
@@ -513,7 +538,7 @@ var Datepicker = (function(){
                         Datepicker.status.currOpt.date.year = decade.start-16;
                         break;
                 }
-                renderPicker();
+                renderPicker("shiftLeft");
                 break;
             case "pick-nextR":
                 switch (Datepicker.status.currOpt.range){
@@ -535,7 +560,7 @@ var Datepicker = (function(){
                         break;
                     
                 }
-                renderPicker();
+                renderPicker("shiftRight");
                 break;
             case "pick-prevM":
                 newDay = evBtn.innerText;
@@ -570,13 +595,13 @@ var Datepicker = (function(){
                         }
                         Datepicker.status.currOpt.date.month = monthNum;
                         Datepicker.status.currOpt.range = "Day";
-                        renderPicker();
+                        renderPicker("scaleDown");
                         break;
                     case "Year":
                         Datepicker.status.currOpt.date.month = 1;
                         Datepicker.status.currOpt.date.year = parseInt(data);
                         Datepicker.status.currOpt.range = "Month";
-                        renderPicker();
+                        renderPicker("scaleDown");
                         break;
                 }
                 break;
