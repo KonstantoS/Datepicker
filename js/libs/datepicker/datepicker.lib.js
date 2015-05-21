@@ -100,7 +100,7 @@ var Datepicker = (function(){
             return patt;
         }
         fullPatt = "^("+reg(pattern)+")$";
-        console.log(RegExp(fullPatt));
+        //console.log(RegExp(fullPatt));
         if(!RegExp(fullPatt).test(string))
             return false;
                
@@ -115,6 +115,9 @@ var Datepicker = (function(){
                 break;
             }
         }
+        if(typeof month === "string")
+            return false;
+        
         if(parseInt(month) < 0)
             month = 1;
         else if(parseInt(month) > 12)
@@ -466,7 +469,7 @@ var Datepicker = (function(){
                 Datepicker.status.currOpt.date = typedDate;
                 renderPicker();
             }
-            else{
+            else if(!/MM/.test(field.datepickerOpts.dateFormat)){
                 //Storing cursor position
                 start = field.selectionStart,
                 end = field.selectionEnd;                
@@ -581,5 +584,3 @@ var Datepicker = (function(){
     };
     return public;
 }());
-
-
