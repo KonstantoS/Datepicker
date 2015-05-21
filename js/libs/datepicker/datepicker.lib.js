@@ -538,7 +538,7 @@ var Datepicker = (function(){
                         Datepicker.status.currOpt.date.year = decade.start-16;
                         break;
                 }
-                renderPicker("shiftLeft");
+                renderPicker("shiftRight");
                 break;
             case "pick-nextR":
                 switch (Datepicker.status.currOpt.range){
@@ -560,7 +560,7 @@ var Datepicker = (function(){
                         break;
                     
                 }
-                renderPicker("shiftRight");
+                renderPicker("shiftLeft");
                 break;
             case "pick-prevM":
                 newDay = evBtn.innerText;
