@@ -165,8 +165,8 @@ var Datepicker = (function(){
      * @returns {string} Formatted string
      */
     function stringDate(pattern, date){
-        string = pattern.replace("dd",date.day);
-        string = string.replace("mm",date.month);
+        string = pattern.replace("dd",(date.day<10)? "0"+date.day : date.day);
+        string = string.replace("mm",(date.month<10)? "0"+date.month : date.month);
         string = string.replace("yyyy",date.year);
         string = string.replace("yy",(date.year+"").substr(2));
         string = string.replace("MM",MonthName[date.month-1]);
@@ -302,25 +302,38 @@ var Datepicker = (function(){
         }
         function transHandler(e){
             e.target.removeEventListener('webkitTransitionEnd', transHandler);
-            document.querySelector(".picknic-content").innerHTML = '';
-            document.querySelector(".picknic-content").appendChild(table);
+            document.querySelector(".picknic-content").removeChild(e.target);
+            table.style.opacity = "1";
+            table.style.left = "0";
+            table.style.transform = "scale(1)";
         }
         if(typeof animation === "string"){
             document.querySelector(".picknic-content table").addEventListener('webkitTransitionEnd', transHandler);
+            
             switch (animation){
                 case "scaleDown":
+                    table.style.opacity = "0";
+                    table.style.transform = "scale(0.5)";
                     document.querySelector(".picknic-content table").style.opacity = "0";
                     document.querySelector(".picknic-content table").style.transform = "scale(2.0)";
+                    document.querySelector(".picknic-content").insertBefore(table, document.querySelector(".picknic-content").firstChild);
                     break;
                 case "scaleUp":
+                    table.style.opacity = "0";
+                    table.style.transform = "scale(2.0)";
                     document.querySelector(".picknic-content table").style.opacity = "0";
                     document.querySelector(".picknic-content table").style.transform = "scale(0.5)";
+                    document.querySelector(".picknic-content").insertBefore(table, document.querySelector(".picknic-content").firstChild);
                     break;
                 case "shiftLeft":
+                    table.style.left = "200px";
                     document.querySelector(".picknic-content table").style.transform = "translateX(-200px)";
+                    document.querySelector(".picknic-content").insertBefore(table, document.querySelector(".picknic-content").firstChild);
                     break;
                 case "shiftRight":
+                    table.style.left = "-200px";
                     document.querySelector(".picknic-content table").style.transform = "translateX(200px)";
+                    document.querySelector(".picknic-content").insertBefore(table, document.querySelector(".picknic-content").firstChild);
                     break;
             }
         }
@@ -516,8 +529,10 @@ var Datepicker = (function(){
         
         switch(elName){
             case "pick-range": //Shitch range
-                Datepicker.status.currOpt.range = (avalRanges[avalRanges.indexOf(Datepicker.status.currOpt.range)+1] !== undefined) ? avalRanges[avalRanges.indexOf(Datepicker.status.currOpt.range)+1] : Datepicker.status.currOpt.range;
-                renderPicker("scaleUp");
+                if(avalRanges[avalRanges.indexOf(Datepicker.status.currOpt.range)+1] !== undefined){
+                    Datepicker.status.currOpt.range =  avalRanges[avalRanges.indexOf(Datepicker.status.currOpt.range)+1];
+                    renderPicker("scaleUp");
+                }
                 break;
             case "pick-prevR":
                 switch (Datepicker.status.currOpt.range){

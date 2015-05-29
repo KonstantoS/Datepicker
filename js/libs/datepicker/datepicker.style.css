@@ -37,14 +37,19 @@
     font-size:13px;
     background:#5a5b5f;
 }
-    #picknic-date table{
+.picknic-content{
+    position: relative;
+    width:170px;
+    margin:15px auto 7px !important;
+}
+    .picknic-content table{
         width:170px;
         font-size: 10.5px;
         text-align: center;
         vertical-align: middle;
-        margin:15px auto 7px !important;
-        margin: 0 auto;
-        transition: all linear 0.3s;
+        position:absolute;
+        top:0;
+        transition: all linear 0.2s;
     }
     .picknic-top > div{
         position: relative;
