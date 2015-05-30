@@ -107,18 +107,23 @@ var Datepicker = (function(){
      * @param {string} string
      * @returns {day,month,year}
      */
-    function parseDate(pattern, string){
+    function parseDate(pattern, string, inted){
+        inted = inted === undefined ? true : false;
         function reg(pattern){
             patt = pattern.replace("dd","\\d{1,2}");
             patt = patt.replace("mm","\\d{1,2}");
             patt = patt.replace("yyyy","\\d{4}");
-            patt = patt.replace("MM","[A-Za-z]{3,9}");
+            if(inted)
+                patt = patt.replace("MM","[A-Za-z]{3,9}");
+            else
+                patt = patt.replace("MM","[A-Za-z]{1,9}");
+            
             patt = patt.replace(/\s/g,"\\s");
             return patt;
         }
         fullPatt = "^("+reg(pattern)+")$";
         //console.log(RegExp(fullPatt));
-        if(!RegExp(fullPatt).test(string))
+        if(!RegExp(fullPatt).test(string) && inted)
             return false;
                
         //Getting month
@@ -126,6 +131,7 @@ var Datepicker = (function(){
         patt = patt.replace(/MM/,"(MM)");
         
         month = string.replace(RegExp(reg(patt)),"$1");
+        if(inted){
         for(key in MonthName){
             if(MonthName[key] === month){
                 month = parseInt(key)+1;
@@ -134,26 +140,30 @@ var Datepicker = (function(){
         }
         if(typeof month === "string" && /MM/.test(string)===true)
             return false;
-        
         if(parseInt(month) < 0)
             month = 1;
         else if(parseInt(month) > 12)
             month = 12;
         else 
             month = parseInt(month);
-        
+        }                
+
         //Getting year
         patt = pattern.replace(/y{4}/,"(yyyy)");
         if(!/\(y{4}\)/.test(patt)){
             patt = pattern.replace(/y{2}/,"(yy)");
         }
-        year = parseInt(string.replace(RegExp(reg(patt)),"$1"));
+        year = inted ? parseInt(string.replace(RegExp(reg(patt)),"$1")) : string.replace(RegExp(reg(patt)),"$1");
         
         //Getting days
         patt = pattern.replace(/dd/,"(dd)");
+        if(inted){
         day = parseInt(string.replace(RegExp(reg(patt)),"$1"));
         if(day > monthParams(month,year).daysNum)
             day = monthParams(month,year).daysNum;
+        }
+        else
+            day = string.replace(RegExp(reg(patt)),"$1");
         
         return {
             day:day,
@@ -544,12 +554,14 @@ var Datepicker = (function(){
              
             typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
             var selectStart = field.selectionStart,
-                selectEnd = field.selectionEnd;                
+                selectEnd = field.selectionEnd; 
+            partUnder = getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart);
+            field.datepickerOpts.LastValidDateStr = field.value;
+            
             if((e.keyCode === 38 || e.keyCode === 40) && typedDate !== false){
                 e.preventDefault();
                 anim="";                
                 if(e.keyCode === 38){ //Up arrow  
-                    partUnder = getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart);
                     switch (partUnder.type){
                         case "day":
                             if(typedDate.day<monthParams(typedDate.month,typedDate.year).daysNum){
@@ -597,7 +609,6 @@ var Datepicker = (function(){
                     }
                 }
                 else if(e.keyCode === 40){ //Down arrow
-                    partUnder = getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart);
                     switch (partUnder.type){
                         case "day":
                             if(typedDate.day>1){
@@ -643,9 +654,6 @@ var Datepicker = (function(){
                             }
                             break;
                     }
-                    
-                    
-                   
                 }
                 Datepicker.status.currOpt.date = typedDate;
                 field.value = stringDate(field.datepickerOpts.dateFormat,typedDate);
@@ -653,8 +661,19 @@ var Datepicker = (function(){
                 renderPicker(anim);
                 return;
             }
-            
-            field.datepickerOpts.LastValidDateStr = field.value;
+            else if(/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type==="month"){
+                e.preventDefault();
+                if(partUnder.cursorPos === 0){
+                    field.value = stringDate(field.datepickerOpts.dateFormat,{day:typedDate.day,month:-1,year:typedDate.year}).replace("undefined","");
+                    field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode)+field.value.substr(selectStart);
+                }
+                else{
+                    field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode).toLowerCase()+field.value.substr(selectStart);
+                }
+                field.setSelectionRange(selectStart+1, selectEnd+1);
+                anim="";
+                console.log(parseDate(field.datepickerOpts.dateFormat,field.value,false));
+            }
             if(field.value.length === maxLength(field.datepickerOpts.dateFormat)){
                 if(textSymbols().indexOf(e.keyCode)>=0 && (selectStart-selectEnd)===0)
                     e.preventDefault();
