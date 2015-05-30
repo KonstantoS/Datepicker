@@ -15,7 +15,9 @@
     <div class="content">
         <div>
             <h3>#1 Params:</h3>
-            <p>This datepicker has default parameters except viewing range.</p>
+            <p>This datepicker has default parameters except viewing range.
+            Also arrow up and down keys increments/decrements date when are being used in field.
+            </p>
             <pre>
 Datepicker.set(".dateField",{
     range: "Month"
@@ -31,15 +33,15 @@ Datepicker.set(".dateField",{
             <pre>
 Datepicker.set(".yearRanged",{
     range: "Year",
-    dateFormat: "dd-mm-yyyy"
+    dateFormat: "yyyyddmm"
 });    
             </pre>
-            <input type="text" class="yearRanged" value='20-05-2015'>
+            <input type="text" class="yearRanged" value='20152005'>
         </div>
         <div>
             <h3>#3 Params:</h3>
             <p>That one has: other date format (ex: 20, May 2015), datepicker activates by button. First day is Monday.</p>
-            <pre>
+            <pre contenteditable="true">
 Datepicker.set("#uniqueDatepicker",{
     dateFormat: "dd, MM yyyy", 
     button: true,
@@ -54,11 +56,11 @@ Datepicker.set("#uniqueDatepicker",{
     
     <script type="text/javascript">
         Datepicker.set(".dateField",{
-            range: "Month" // Could be (Day/Month/Year/YearRange)
+            range: "Month" // Could be (Day/Month/Year)
         });
         Datepicker.set(".yearRanged",{
             range: "Year",
-            dateFormat: "dd-mm-yyyy"
+            dateFormat: "yyyyddmm"
         });
         Datepicker.set("#uniqueDatepicker",{
             range: "Day", 

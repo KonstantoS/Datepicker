@@ -165,7 +165,10 @@ var Datepicker = (function(){
      * @returns {string} Formatted string
      */
     function stringDate(pattern, date){
-        string = pattern.replace("dd",(date.day<10)? "0"+date.day : date.day);
+        if(/MM/.test(pattern)===true)
+            string = pattern.replace("dd",date.day);
+        else
+            string = pattern.replace("dd",(date.day<10)? "0"+date.day : date.day);
         string = string.replace("mm",(date.month<10)? "0"+date.month : date.month);
         string = string.replace("yyyy",date.year);
         string = string.replace("yy",(date.year+"").substr(2));
@@ -454,8 +457,77 @@ var Datepicker = (function(){
                 return;
             }
             field = e.target;
+             
+            typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
             var selectStart = field.selectionStart,
-                selectEnd = field.selectionEnd;
+                selectEnd = field.selectionEnd;                
+            if(e.keyCode === 38 || e.keyCode === 40){
+                e.preventDefault();
+                anim="";
+                function getType(value, split){
+                    var a = value.substring(0, split).match(/[A-Za-z0-9]*$/)[0];
+                    var b = value.substring(split).match(/^[A-Za-zs0-9]*/)[0];
+                    console.log(a + b);
+                }
+                if(e.keyCode === 38){ //Up arrow  
+                    getType(field.value,selectStart);
+                    if(typedDate.day<monthParams(typedDate.month,typedDate.year).daysNum){
+                        typedDate.day++;
+                    }
+                    else{
+                        typedDate.day=1;
+                        
+                        if(Datepicker.status.currOpt.range === "Day")
+                                anim = "shiftLeft";
+                            
+                        if(typedDate.month<12){
+                            typedDate.month++;
+                        }
+                        else{
+                            typedDate.month = 1;
+                            typedDate.year++;
+                            decadeEnd = getDecade(typedDate.year-1).end;
+                            if(Datepicker.status.currOpt.range === "Month")
+                                anim = "shiftLeft";
+                            else if(Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year);
+                                anim = "shiftLeft";
+                        }
+                    }
+                    
+                }
+                else if(e.keyCode === 40){ //Down arrow
+                    getType(field.value,selectStart);
+                    if(typedDate.day>1){
+                        typedDate.day--;
+                    }
+                    else{
+                        typedDate.day=monthParams(typedDate.month,typedDate.year).daysNum;
+                        
+                        if(Datepicker.status.currOpt.range === "Day")
+                            anim = "shiftRight";
+                            
+                        if(typedDate.month>1){
+                            typedDate.month--;
+                        }
+                        else{
+                            typedDate.month = 12;
+                            typedDate.year--;
+                            decadeStart = getDecade(typedDate.year+1).start;
+                            if(Datepicker.status.currOpt.range === "Month")
+                                anim = "shiftRight";
+                            else if(Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year);
+                                anim = "shiftRight";
+                        }
+                    }
+                   
+                }
+                Datepicker.status.currOpt.date = typedDate;
+                field.value = stringDate(field.datepickerOpts.dateFormat,typedDate);
+                field.setSelectionRange(selectStart, selectEnd);
+                renderPicker(anim);
+                return;
+            }
+            
             field.datepickerOpts.LastValidDateStr = field.value;
             if(field.value.length === maxLength(field.datepickerOpts.dateFormat)){
                 if(textSymbols().indexOf(e.keyCode)>=0 && (selectStart-selectEnd)===0)
@@ -466,48 +538,11 @@ var Datepicker = (function(){
         else if(e.type === 'keyup' && e.keyCode !== 13 && e.keyCode !== 37 && e.keyCode !== 39){
             field = e.target;
             typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
-            if(e.keyCode === 38){
-                if(typedDate.day<monthParams(typedDate.month,typedDate.year).daysNum){
-                    typedDate.day++;
-                }
-                else{
-                    typedDate.day=1;
-                    if(typedDate.month<12)
-                        typedDate.month++;
-                    else{
-                        typedDate.month = 1;
-                        typedDate.year++;
-                    }
-                }
-                Datepicker.status.currOpt.date = typedDate;
-                field.value = stringDate(field.datepickerOpts.dateFormat,typedDate);
-                renderPicker();
-                return;
-            }
-            else if(e.keyCode === 40){
-                if(typedDate.day>1){
-                    typedDate.day--;
-                }
-                else{
-                    typedDate.day=monthParams(typedDate.month,typedDate.year).daysNum;
-                    if(typedDate.month>1)
-                        typedDate.month--;
-                    else{
-                        typedDate.month = 12;
-                        typedDate.year--;
-                    }
-                }
-                Datepicker.status.currOpt.date = typedDate;
-                field.value = stringDate(field.datepickerOpts.dateFormat,typedDate);
-                renderPicker();
-                return;
-            }
             if(typedDate !== false){
-                
                 Datepicker.status.currOpt.date = typedDate;
                 renderPicker();
             }
-            else if(!/MM/.test(field.datepickerOpts.dateFormat)){
+            else if(!/MM/.test(field.datepickerOpts.dateFormat) && field.value.length === maxLength(field.datepickerOpts.dateFormat)){
                 //Storing cursor position
                 start = field.selectionStart,
                 end = field.selectionEnd;                

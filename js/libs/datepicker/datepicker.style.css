@@ -49,7 +49,7 @@
         vertical-align: middle;
         position:absolute;
         top:0;
-        transition: all linear 0.2s;
+        transition: all linear 0.25s;
     }
     .picknic-top > div{
         position: relative;
