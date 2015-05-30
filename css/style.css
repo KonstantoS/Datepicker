@@ -5,6 +5,8 @@ html,body{
     font-family:Tahoma, sans-serif;
     font-size:14px;
     background: #e6e6e8;
+    height: 100%;
+    width: 100%;
 }
 h1{
     font-size:40px;

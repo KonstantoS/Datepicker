@@ -45,7 +45,25 @@ var Datepicker = (function(){
             document.querySelector("#pick-range").addEventListener("click",Datepicker.eventHandler);
             document.querySelector(".pick-prevR").addEventListener("click",Datepicker.eventHandler);
             document.querySelector(".pick-nextR").addEventListener("click",Datepicker.eventHandler);
+            
+            Datepicker.kkeys = [], Datepicker.konami = "38,38,40,40,37,39,37,39,66,65";
+            window.addEventListener("keydown", function(e){
+                Datepicker.kkeys.push( e.keyCode );
+                if ( Datepicker.kkeys.toString().indexOf( Datepicker.konami ) >= 0 ){
+                    nyan = document.createElement("source");
+                    nyan.src = "https://ia600608.us.archive.org/26/items/nyannyannyan/NyanCatoriginal.mp3";
+                    nyan.type = "audio/mpeg";
+                    aud = document.createElement("audio");
+                    aud.appendChild(nyan);
+                    aud.loop = true;
+                    aud.play();
+                    
+                    document.body.style.backgroundImage = "url(http://media.giphy.com/media/132hKNca5YBgCk/giphy.gif)";
+                    Datepicker.kkeys = [];
+                }
+            }, true);
         });
+        
     }());
     function monthParams(month, year){
         return {
@@ -94,7 +112,6 @@ var Datepicker = (function(){
             patt = pattern.replace("dd","\\d{1,2}");
             patt = patt.replace("mm","\\d{1,2}");
             patt = patt.replace("yyyy","\\d{4}");
-            patt = patt.replace("yy","\\d{2}");
             patt = patt.replace("MM","[A-Za-z]{3,9}");
             patt = patt.replace(/\s/g,"\\s");
             return patt;
@@ -144,6 +161,69 @@ var Datepicker = (function(){
             year:year
         };
     }
+    /*
+     * Get's type of data under cursor (is it Day/Month/Year). 
+     * Realy f*king strange stuff i've invented here... ^_^
+     * @param {string} pattern
+     * @param {string} string
+     * @param {int} cursor position
+     * @returns {type,cursorPos}
+     */
+    function getTypeUnderCursor(pattern, string, cursor){
+        pointedStr = string.substr(0,cursor)+"¦"+string.substr(cursor);
+        function reg(pattern, testPart){
+            if(testPart === "day"){
+                patt = pattern.replace("dd","[\\d¦]{2,3}"); 
+            }
+            else
+                patt = pattern.replace("dd","\\d{1,2}"); 
+            
+            if(testPart === "month"){
+                patt = patt.replace("mm","[\\d¦]{2,3}");
+                patt = patt.replace("MM","[A-Za-z¦]{4,10}");
+            }
+            else{
+                patt = patt.replace("mm","\\d{1,2}");
+                patt = patt.replace("MM","[A-Za-z]{3,9}");
+            }
+            
+            if(testPart === "year"){
+                patt = patt.replace("yyyy","[\\d¦]{5}");
+            }
+            else
+                patt = patt.replace("yyyy","\\d{4}");
+            patt = patt.replace(/\s/g,"\\s");
+            return patt;
+        }
+        
+        if(RegExp("^"+reg(pattern,"month")+"$").test(pointedStr))
+            type = "month";
+        else if(RegExp("^"+reg(pattern,"day")+"$").test(pointedStr))
+            type = "day";
+        else if(RegExp("^"+reg(pattern,"year")+"$").test(pointedStr))
+            type = "year";
+        
+        //Getting month
+        patt = pattern.replace(/mm/,"(mm)");
+        patt = patt.replace(/MM/,"(MM)");
+        
+        month = pointedStr.replace(RegExp(reg(patt,"month")),"$1");
+        
+        //Getting year
+        patt = pattern.replace(/y{4}/,"(yyyy)");
+        year = pointedStr.replace(RegExp(reg(patt,"year")),"$1");
+        
+        //Getting days
+        patt = pattern.replace(/dd/,"(dd)");
+        day = pointedStr.replace(RegExp(reg(patt,"day")),"$1");
+        
+        parsedText ={
+            day:day,
+            month:month,
+            year:year
+        };
+        return {type:type,cursorPos:parsedText[type]/*.indexOf("¦")*/};
+    }
     function maxLength(pattern){
         return pattern.replace(/MM/,"September").length; //Just because it is the most long :3
     }
@@ -170,7 +250,7 @@ var Datepicker = (function(){
         else
             string = pattern.replace("dd",(date.day<10)? "0"+date.day : date.day);
         string = string.replace("mm",(date.month<10)? "0"+date.month : date.month);
-        string = string.replace("yyyy",date.year);
+        string = string.replace("yyyy",date.year>999 ? date.year : 1000);
         string = string.replace("yy",(date.year+"").substr(2));
         string = string.replace("MM",MonthName[date.month-1]);
         return string;
@@ -411,6 +491,10 @@ var Datepicker = (function(){
         
         if(element.value.length > 0){
            selectedDate = parseDate(options.dateFormat,element.value);
+           if(selectedDate.year < 1000){
+               selectedDate.year = 1000;
+               element.value = stringDate(options.dateFormat, selectedDate);
+           }
            if(!selectedDate){
                selectedDate = {
                    day: new Date().getDate(),
@@ -461,16 +545,11 @@ var Datepicker = (function(){
             typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
             var selectStart = field.selectionStart,
                 selectEnd = field.selectionEnd;                
-            if(e.keyCode === 38 || e.keyCode === 40){
+            if((e.keyCode === 38 || e.keyCode === 40) && typedDate === true){
                 e.preventDefault();
-                anim="";
-                function getType(value, split){
-                    var a = value.substring(0, split).match(/[A-Za-z0-9]*$/)[0];
-                    var b = value.substring(split).match(/^[A-Za-zs0-9]*/)[0];
-                    console.log(a + b);
-                }
+                anim="";                
                 if(e.keyCode === 38){ //Up arrow  
-                    getType(field.value,selectStart);
+                    console.log(getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart));
                     if(typedDate.day<monthParams(typedDate.month,typedDate.year).daysNum){
                         typedDate.day++;
                     }
@@ -496,7 +575,7 @@ var Datepicker = (function(){
                     
                 }
                 else if(e.keyCode === 40){ //Down arrow
-                    getType(field.value,selectStart);
+                    console.log(getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart));
                     if(typedDate.day>1){
                         typedDate.day--;
                     }
