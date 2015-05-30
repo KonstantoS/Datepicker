@@ -222,7 +222,7 @@ var Datepicker = (function(){
             month:month,
             year:year
         };
-        return {type:type,cursorPos:parsedText[type]/*.indexOf("¦")*/};
+        return {type:type,cursorPos:parsedText[type].indexOf("¦")};
     }
     function maxLength(pattern){
         return pattern.replace(/MM/,"September").length; //Just because it is the most long :3
@@ -545,59 +545,106 @@ var Datepicker = (function(){
             typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
             var selectStart = field.selectionStart,
                 selectEnd = field.selectionEnd;                
-            if((e.keyCode === 38 || e.keyCode === 40) && typedDate === true){
+            if((e.keyCode === 38 || e.keyCode === 40) && typedDate !== false){
                 e.preventDefault();
                 anim="";                
                 if(e.keyCode === 38){ //Up arrow  
-                    console.log(getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart));
-                    if(typedDate.day<monthParams(typedDate.month,typedDate.year).daysNum){
-                        typedDate.day++;
+                    partUnder = getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart);
+                    switch (partUnder.type){
+                        case "day":
+                            if(typedDate.day<monthParams(typedDate.month,typedDate.year).daysNum){
+                                typedDate.day++;
+                            }
+                            else{
+                                typedDate.day=1;
+
+                                if(Datepicker.status.currOpt.range === "Day")
+                                        anim = "shiftLeft";
+
+                                if(typedDate.month<12){
+                                    typedDate.month++;
+                                }
+                                else{
+                                    typedDate.month = 1;
+                                    typedDate.year++;
+                                    decadeEnd = getDecade(typedDate.year-1).end;
+                                    if(Datepicker.status.currOpt.range === "Month")
+                                        anim = "shiftLeft";
+                                    else if(Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year);
+                                        anim = "shiftLeft";
+                                }
+                            }
+                            break;
+                        case "month":
+                            if(typedDate.month<12){
+                                typedDate.month++;
+                            }
+                            else{
+                                typedDate.month = 1;
+                                typedDate.year++;
+                                decadeEnd = getDecade(typedDate.year-1).end;
+                                if(Datepicker.status.currOpt.range === "Month")
+                                    anim = "shiftLeft";
+                                else if(Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year);
+                                    anim = "shiftLeft";
+                            }
+                            break;
+                        case "year":
+                            if(partUnder.cursorPos>0){
+                                typedDate.year += Math.pow(10,(4-partUnder.cursorPos));
+                            }
+                            break;
                     }
-                    else{
-                        typedDate.day=1;
-                        
-                        if(Datepicker.status.currOpt.range === "Day")
-                                anim = "shiftLeft";
-                            
-                        if(typedDate.month<12){
-                            typedDate.month++;
-                        }
-                        else{
-                            typedDate.month = 1;
-                            typedDate.year++;
-                            decadeEnd = getDecade(typedDate.year-1).end;
-                            if(Datepicker.status.currOpt.range === "Month")
-                                anim = "shiftLeft";
-                            else if(Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year);
-                                anim = "shiftLeft";
-                        }
-                    }
-                    
                 }
                 else if(e.keyCode === 40){ //Down arrow
-                    console.log(getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart));
-                    if(typedDate.day>1){
-                        typedDate.day--;
+                    partUnder = getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart);
+                    switch (partUnder.type){
+                        case "day":
+                            if(typedDate.day>1){
+                                typedDate.day--;
+                            }
+                            else{
+                                typedDate.day=monthParams(typedDate.month,typedDate.year).daysNum;
+
+                                if(Datepicker.status.currOpt.range === "Day")
+                                    anim = "shiftRight";
+
+                                if(typedDate.month>1){
+                                    typedDate.month--;
+                                }
+                                else{
+                                    typedDate.month = 12;
+                                    typedDate.year--;
+                                    decadeStart = getDecade(typedDate.year+1).start;
+                                    if(Datepicker.status.currOpt.range === "Month")
+                                        anim = "shiftRight";
+                                    else if(Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year);
+                                        anim = "shiftRight";
+                                }
+                            }
+                            break;
+                        case "month":
+                            if(typedDate.month>1){
+                                typedDate.month--;
+                            }
+                            else{
+                                typedDate.month = 12;
+                                typedDate.year--;
+                                decadeStart = getDecade(typedDate.year+1).start;
+                                if(Datepicker.status.currOpt.range === "Month")
+                                    anim = "shiftRight";
+                                else if(Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year);
+                                    anim = "shiftRight";
+                            }
+                            break;
+                        case "year":
+                            if(partUnder.cursorPos>0){
+                                typedDate.year -= Math.pow(10,(4-partUnder.cursorPos));
+                            }
+                            break;
                     }
-                    else{
-                        typedDate.day=monthParams(typedDate.month,typedDate.year).daysNum;
-                        
-                        if(Datepicker.status.currOpt.range === "Day")
-                            anim = "shiftRight";
-                            
-                        if(typedDate.month>1){
-                            typedDate.month--;
-                        }
-                        else{
-                            typedDate.month = 12;
-                            typedDate.year--;
-                            decadeStart = getDecade(typedDate.year+1).start;
-                            if(Datepicker.status.currOpt.range === "Month")
-                                anim = "shiftRight";
-                            else if(Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year);
-                                anim = "shiftRight";
-                        }
-                    }
+                    
+                    
                    
                 }
                 Datepicker.status.currOpt.date = typedDate;
