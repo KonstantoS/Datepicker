@@ -588,9 +588,11 @@ var Datepicker = (function(){
                                 }
                                 else{
                                     typedDate.month = 1;
-                                    typedDate.year++;
-                                    if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
-                                        anim = "shiftLeft";
+                                    if(typedDate.year<10000){
+                                        typedDate.year++;
+                                        if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                            anim = "shiftLeft";
+                                    }
                                 }
                             }
                             break;
@@ -600,18 +602,22 @@ var Datepicker = (function(){
                             }
                             else{
                                 typedDate.month = 1;
-                                typedDate.year++;
-                                
-                                if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
-                                    anim = "shiftLeft";
+                                if(typedDate.year<10000){
+                                    typedDate.year++;
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                        anim = "shiftLeft";
+                                }
                             }
                             break;
                         case "year":
                             if(partUnder.cursorPos>0){
-                                typedDate.year += Math.pow(10,(4-partUnder.cursorPos));
-                            }
-                            if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                if(typedDate.year+Math.pow(10,(4-partUnder.cursorPos))<10000){
+                                    typedDate.year += Math.pow(10,(4-partUnder.cursorPos));
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
                                     anim = "shiftLeft";
+                                }
+                            }
+                            
                             break;
                     }
                 }
@@ -633,9 +639,11 @@ var Datepicker = (function(){
                                 }
                                 else{
                                     typedDate.month = 12;
-                                    typedDate.year--;
-                                    if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
-                                        anim = "shiftRight";
+                                    if(typedDate.year>1000){
+                                        typedDate.year--;
+                                        if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                            anim = "shiftRight";
+                                    }
                                 }
                             }
                             break;
@@ -645,18 +653,22 @@ var Datepicker = (function(){
                             }
                             else{
                                 typedDate.month = 12;
-                                typedDate.year--;
-                                
-                                if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
-                                    anim = "shiftRight";
+                                if(typedDate.year>1000){
+                                    typedDate.year--;
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                        anim = "shiftRight";
+                                }
                             }
                             break;
                         case "year":
-                            if(partUnder.cursorPos>0){
-                                typedDate.year -= Math.pow(10,(4-partUnder.cursorPos));
+                            if(partUnder.cursorPos>0 && typedDate.year>1000){
+                                if(typedDate.year-Math.pow(10,(4-partUnder.cursorPos)>999)){
+                                    typedDate.year -= Math.pow(10,(4-partUnder.cursorPos));
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                        anim = "shiftRight";
+                                }
                             }
-                            if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
-                                anim = "shiftRight";
+                            
                             break;
                     }
                 }
