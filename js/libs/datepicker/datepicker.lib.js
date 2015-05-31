@@ -570,7 +570,8 @@ var Datepicker = (function(){
             if((e.keyCode === 38 || e.keyCode === 40) && typedDate !== false){
                 e.preventDefault();
                 anim="";                
-                if(e.keyCode === 38){ //Up arrow  
+                if(e.keyCode === 38){ //Up arrow 
+                    decadeEnd = getDecade(typedDate.year-1).end;
                     switch (partUnder.type){
                         case "day":
                             if(typedDate.day<monthParams(typedDate.month,typedDate.year).daysNum){
@@ -588,10 +589,7 @@ var Datepicker = (function(){
                                 else{
                                     typedDate.month = 1;
                                     typedDate.year++;
-                                    decadeEnd = getDecade(typedDate.year-1).end;
-                                    if(Datepicker.status.currOpt.range === "Month")
-                                        anim = "shiftLeft";
-                                    else if(Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year);
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
                                         anim = "shiftLeft";
                                 }
                             }
@@ -603,10 +601,8 @@ var Datepicker = (function(){
                             else{
                                 typedDate.month = 1;
                                 typedDate.year++;
-                                decadeEnd = getDecade(typedDate.year-1).end;
-                                if(Datepicker.status.currOpt.range === "Month")
-                                    anim = "shiftLeft";
-                                else if(Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year);
+                                
+                                if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
                                     anim = "shiftLeft";
                             }
                             break;
@@ -614,10 +610,13 @@ var Datepicker = (function(){
                             if(partUnder.cursorPos>0){
                                 typedDate.year += Math.pow(10,(4-partUnder.cursorPos));
                             }
+                            if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                    anim = "shiftLeft";
                             break;
                     }
                 }
                 else if(e.keyCode === 40){ //Down arrow
+                    decadeStart = getDecade(typedDate.year+1).start;
                     switch (partUnder.type){
                         case "day":
                             if(typedDate.day>1){
@@ -635,10 +634,7 @@ var Datepicker = (function(){
                                 else{
                                     typedDate.month = 12;
                                     typedDate.year--;
-                                    decadeStart = getDecade(typedDate.year+1).start;
-                                    if(Datepicker.status.currOpt.range === "Month")
-                                        anim = "shiftRight";
-                                    else if(Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year);
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
                                         anim = "shiftRight";
                                 }
                             }
@@ -650,10 +646,8 @@ var Datepicker = (function(){
                             else{
                                 typedDate.month = 12;
                                 typedDate.year--;
-                                decadeStart = getDecade(typedDate.year+1).start;
-                                if(Datepicker.status.currOpt.range === "Month")
-                                    anim = "shiftRight";
-                                else if(Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year);
+                                
+                                if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
                                     anim = "shiftRight";
                             }
                             break;
@@ -661,6 +655,8 @@ var Datepicker = (function(){
                             if(partUnder.cursorPos>0){
                                 typedDate.year -= Math.pow(10,(4-partUnder.cursorPos));
                             }
+                            if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                anim = "shiftRight";
                             break;
                     }
                 }
