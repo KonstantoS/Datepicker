@@ -10,12 +10,13 @@
  */
 var Datepicker = (function(){
     var public = {};
-    var MonthName = {
-        '0':'January', '1':'February', 
-        '2':'March', '3':'April', '4':'May', 
-        '5':'June', '6':'July', '7':'August', 
-        '8':'September', '9':'October', '10':'November', 
-        '11':'December'};
+    var MonthName = [
+            'January', 'February', 
+            'March', 'April', 'May', 
+            'June', 'July', 'August', 
+            'September', 'October', 'November', 
+            'December'
+        ];
     var weekDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     var avalRanges = ['Day','Month','Year'];
     var mainTemplate = '<div id="picknic-date"> \
@@ -32,6 +33,11 @@ var Datepicker = (function(){
                 </div> \
             </div>';
     (function __construct(){ //Just for beauty =) yep, php masta
+        Math.clamp = function (int, min, max) {
+            int = Math.max(int, min);
+
+            return Math.min(int, max);
+        };
         window.addEventListener("load",function(){
             wrapper = document.createElement('div');
             wrapper.innerHTML = mainTemplate;
@@ -132,27 +138,29 @@ var Datepicker = (function(){
         
         month = string.replace(RegExp(reg(patt)),"$1");
         if(inted){
-        for(key in MonthName){
-            if(MonthName[key] === month){
-                month = parseInt(key)+1;
-                break;
+            /*for(key in MonthName){
+                if(MonthName[key] === month){
+                    month = parseInt(key)+1;
+                    break;
+                }
             }
-        }
-        if(typeof month === "string" && /MM/.test(string)===true)
-            return false;
-        if(parseInt(month) < 0)
-            month = 1;
-        else if(parseInt(month) > 12)
-            month = 12;
-        else 
-            month = parseInt(month);
+            if(typeof month === "string" && /MM/.test(string)===true)
+                return false;
+            if(parseInt(month) < 0)
+                month = 1;
+            else if(parseInt(month) > 12)
+                month = 12;
+            else 
+                month = parseInt(month);*/
+            index = MonthName.indexOf(month);
+            if (index !== -1) {
+                month = index + 1;
+            }
+            month = Math.clamp(+month, 1, 12);
         }                
 
         //Getting year
         patt = pattern.replace(/y{4}/,"(yyyy)");
-        if(!/\(y{4}\)/.test(patt)){
-            patt = pattern.replace(/y{2}/,"(yy)");
-        }
         year = inted ? parseInt(string.replace(RegExp(reg(patt)),"$1")) : string.replace(RegExp(reg(patt)),"$1");
         
         //Getting days
@@ -179,60 +187,61 @@ var Datepicker = (function(){
      * @param {int} cursor position
      * @returns {type,cursorPos}
      */
-    function getTypeUnderCursor(pattern, string, cursor){
-        pointedStr = string.substr(0,cursor)+"¦"+string.substr(cursor);
-        function reg(pattern, testPart){
-            if(testPart === "day"){
-                patt = pattern.replace("dd","[\\d¦]{2,3}"); 
-            }
-            else
-                patt = pattern.replace("dd","\\d{1,2}"); 
-            
-            if(testPart === "month"){
-                patt = patt.replace("mm","[\\d¦]{2,3}");
-                patt = patt.replace("MM","[A-Za-z¦]{4,10}");
-            }
-            else{
-                patt = patt.replace("mm","\\d{1,2}");
-                patt = patt.replace("MM","[A-Za-z]{3,9}");
-            }
-            
-            if(testPart === "year"){
-                patt = patt.replace("yyyy","[\\d¦]{5}");
-            }
-            else
-                patt = patt.replace("yyyy","\\d{4}");
-            patt = patt.replace(/\s/g,"\\s");
-            return patt;
+    function getTypeUnderCursor(pattern,string,cursor){
+        string = string.substr(0,cursor)+"¦"+string.substr(cursor);
+        
+        function reg(pattern){
+            return pattern.replace("dd","[\\d¦]{2,3}")
+                  .replace("mm","[\\d¦]{2,3}")
+                  .replace("yyyy","[\\d¦]{4,5}")
+                  .replace("MM","[A-Za-z¦]{1,10}")
+                  .replace(/\s/g,"\\s");
         }
         
-        if(RegExp("^"+reg(pattern,"month")+"$").test(pointedStr))
-            type = "month";
-        else if(RegExp("^"+reg(pattern,"day")+"$").test(pointedStr))
-            type = "day";
-        else if(RegExp("^"+reg(pattern,"year")+"$").test(pointedStr))
-            type = "year";
-        
-        //Getting month
-        patt = pattern.replace(/mm/,"(mm)");
-        patt = patt.replace(/MM/,"(MM)");
-        
-        month = pointedStr.replace(RegExp(reg(patt,"month")),"$1");
-        
-        //Getting year
-        patt = pattern.replace(/y{4}/,"(yyyy)");
-        year = pointedStr.replace(RegExp(reg(patt,"year")),"$1");
-        
-        //Getting days
+        var fullPattern = RegExp("^(" + reg(pattern) + ")$");
+
+        if (!RegExp(fullPattern).test(string)) {
+            return false;
+        }
+
+        // Getting month
+        var patt = pattern.replace(/mm/,"(mm)")
+                          .replace(/MM/,"(MM)");
+
+        var month = string.replace(RegExp(reg(patt)),"$1"),
+            index = MonthName.indexOf(month);
+
+        if (index !== -1) {
+            month = index + 1;
+        }
+
+        if (typeof month === "string" && /MM/.test(string) === true) {
+            return false;
+        }
+
+        // Getting year
+        patt = pattern.replace(/(y{4}|y{2})/,"($1)");
+
+        var year = string.replace(RegExp(reg(patt)),"$1");
+
+        // Getting days
         patt = pattern.replace(/dd/,"(dd)");
-        day = pointedStr.replace(RegExp(reg(patt,"day")),"$1");
-        
-        parsedText ={
-            day:day,
-            month:month,
-            year:year
+
+        var day = string.replace(RegExp(reg(patt)),"$1"), type = '';
+
+        var result = {
+            day:   day,
+            month: month,
+            year:  year
         };
-        return {type:type,cursorPos:parsedText[type].indexOf("¦")};
+        for (key in result) {
+            var value = result[key].toString();
+            if (value.indexOf('¦') !== -1) {
+                type = key;
+                break;
+            }
+        }
+        return {type:type,cursorPos:result[type].indexOf("¦")};
     }
     function maxLength(pattern){
         return pattern.replace(/MM/,"September").length; //Just because it is the most long :3
