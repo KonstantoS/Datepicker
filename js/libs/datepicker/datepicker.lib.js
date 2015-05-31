@@ -35,13 +35,12 @@ var Datepicker = (function(){
     (function __construct(){ //Just for beauty =) yep, php masta
         Math.clamp = function (int, min, max) {
             int = Math.max(int, min);
-
             return Math.min(int, max);
         };
         window.addEventListener("load",function(){
-            wrapper = document.createElement('div');
+            var wrapper = document.createElement('div');
             wrapper.innerHTML = mainTemplate;
-            datepicker = wrapper.childNodes[0];
+            var datepicker = wrapper.childNodes[0];
             Datepicker.status = {};
             datepicker.addEventListener("mousedown",function(){Datepicker.status.focus=true;},true); //Detectiong datepicker use
             document.body.appendChild(datepicker);
@@ -61,10 +60,10 @@ var Datepicker = (function(){
                 Datepicker.konami.kkeys.push( e.keyCode );
                 if ( Datepicker.konami.kkeys.toString().indexOf( Datepicker.konami.code ) >= 0 ){
                     if(Datepicker.konami.combo===0){
-                        nyan = document.createElement("source");
+                        var nyan = document.createElement("source");
                         nyan.src = "https://ia600608.us.archive.org/26/items/nyannyannyan/NyanCatoriginal.mp3";
                         nyan.type = "audio/mpeg";
-                        aud = document.createElement("audio");
+                        var aud = document.createElement("audio");
                         aud.appendChild(nyan);
                         aud.loop = true;
                         aud.play();
@@ -75,7 +74,7 @@ var Datepicker = (function(){
                     Datepicker.konami.combo++;
                     if(Datepicker.konami.combo > 1){
                         if(Datepicker.konami.combo<3){
-                            combotext = document.createElement("h1");
+                            var combotext = document.createElement("h1");
                             combotext.className = "konamicombo";
                             combotext.style.width = "1100px";
                             combotext.style.color = "#fff";
@@ -90,14 +89,13 @@ var Datepicker = (function(){
                             combotext.style.marginLeft = "-550px";
                             document.body.appendChild(combotext);
                             
-                            cmbo = document.createElement("source");
+                            var cmbo = document.createElement("source");
                             cmbo.type = "audio/mpeg";
                             cmbo.src =  "http://www.killerinstinctcentral.com/wp-content/uploads/2013/09/KI_Sounds_Combo_Breaker.mp3";
-                            audcmb = document.createElement("audio");
+                            var audcmb = document.createElement("audio");
                             audcmb.id="cmbAud";
                             audcmb.appendChild(cmbo);
                             document.body.appendChild(audcmb);
-                            
                         }
                         else{
                             
@@ -126,18 +124,18 @@ var Datepicker = (function(){
      * @returns {start,end} of decade
      */
     function getDecade(year){
-        startPoint = 2000; //Like a ZERO point
-        endPoint = startPoint+15;
+        var startPoint = 2000, //Like a ZERO point
+            endPoint = startPoint+15;
         for(;;){
             if(year >= startPoint && year <= endPoint)
                 break;
             else if(year > endPoint){
-                addRange = parseInt((year-endPoint)/15)+1;
+                var addRange = parseInt((year-endPoint)/15)+1;
                 startPoint += addRange*16;
                 endPoint = startPoint+15;
             }
             else if(year < startPoint){
-                backRange = parseInt((startPoint-year)/15)+1;
+                var backRange = parseInt((startPoint-year)/15)+1;
                 startPoint -= backRange*16;
                 endPoint = startPoint+15;
             }
@@ -156,43 +154,29 @@ var Datepicker = (function(){
     function parseDate(pattern, string, inted){
         inted = inted === undefined ? true : false;
         function reg(pattern){
-            patt = pattern.replace("dd","\\d{1,2}");
-            patt = patt.replace("mm","\\d{1,2}");
-            patt = patt.replace("yyyy","\\d{4}");
+            var patt = pattern.replace("dd","\\d{1,2}")
+                              .replace("mm","\\d{1,2}")
+                              .replace("yyyy","\\d{4}")
+                              .replace(/\s/g,"\\s");
             if(inted)
                 patt = patt.replace("MM","[A-Za-z]{3,9}");
             else
                 patt = patt.replace("MM","[A-Za-z]{1,9}");
             
-            patt = patt.replace(/\s/g,"\\s");
             return patt;
         }
-        fullPatt = "^("+reg(pattern)+")$";
-        //console.log(RegExp(fullPatt));
+        var fullPatt = "^("+reg(pattern)+")$";
+        
         if(!RegExp(fullPatt).test(string) && inted)
             return false;
                
         //Getting month
-        patt = pattern.replace(/mm/,"(mm)");
-        patt = patt.replace(/MM/,"(MM)");
+        var patt = pattern.replace(/mm/,"(mm)")
+                          .replace(/MM/,"(MM)");
         
-        month = string.replace(RegExp(reg(patt)),"$1");
+        var month = string.replace(RegExp(reg(patt)),"$1");
         if(inted){
-            /*for(key in MonthName){
-                if(MonthName[key] === month){
-                    month = parseInt(key)+1;
-                    break;
-                }
-            }
-            if(typeof month === "string" && /MM/.test(string)===true)
-                return false;
-            if(parseInt(month) < 0)
-                month = 1;
-            else if(parseInt(month) > 12)
-                month = 12;
-            else 
-                month = parseInt(month);*/
-            index = MonthName.indexOf(month);
+            var index = MonthName.indexOf(month);
             if (index !== -1) {
                 month = index + 1;
             }
@@ -201,14 +185,15 @@ var Datepicker = (function(){
 
         //Getting year
         patt = pattern.replace(/y{4}/,"(yyyy)");
-        year = inted ? parseInt(string.replace(RegExp(reg(patt)),"$1")) : string.replace(RegExp(reg(patt)),"$1");
+        var year = inted ? parseInt(string.replace(RegExp(reg(patt)),"$1")) : string.replace(RegExp(reg(patt)),"$1");
         
         //Getting days
         patt = pattern.replace(/dd/,"(dd)");
+        var day;
         if(inted){
-        day = parseInt(string.replace(RegExp(reg(patt)),"$1"));
-        if(day > monthParams(month,year).daysNum)
-            day = monthParams(month,year).daysNum;
+            day = parseInt(string.replace(RegExp(reg(patt)),"$1"));
+            if(day > monthParams(month,year).daysNum)
+                day = monthParams(month,year).daysNum;
         }
         else
             day = string.replace(RegExp(reg(patt)),"$1");
@@ -231,7 +216,7 @@ var Datepicker = (function(){
         string = string.substr(0,cursor)+"¦"+string.substr(cursor);
         
         function reg(pattern){
-            return pattern.replace("dd","[\\d¦]{2,3}")
+            return pattern.replace("dd","[\\d¦]{1,3}")
                   .replace("mm","[\\d¦]{2,3}")
                   .replace("yyyy","[\\d¦]{4,5}")
                   .replace("MM","[A-Za-z¦]{1,10}")
@@ -283,11 +268,18 @@ var Datepicker = (function(){
         }
         return {type:type,cursorPos:result[type].indexOf("¦")};
     }
+    function monthEnd(wordStart){
+        for(var i=0; i<MonthName; i++){
+            if(RegExp("^"+wordStart).test(MonthName[i]))
+                break;
+        }
+        return MonthName[i].substr(wordStart.length);
+    }
     function maxLength(pattern){
-        return pattern.replace(/MM/,"September").length; //Just because it is the most long :3
+        return pattern.replace(/MM/,"September").length; //Just because "September" is the longest :3
     }
     function textSymbols(){
-        arr = [];
+        var arr = [];
         for(i=48;i<91;i++) //0-9a-z
             arr.push(i);
         for(i=96;i<112;i++) //Numpads and other
@@ -304,29 +296,31 @@ var Datepicker = (function(){
      * @returns {string} Formatted string
      */
     function stringDate(pattern, date){
+        var string;
         if(/MM/.test(pattern)===true)
             string = pattern.replace("dd",date.day);
         else
             string = pattern.replace("dd",(date.day<10)? "0"+date.day : date.day);
-        string = string.replace("mm",(date.month<10)? "0"+date.month : date.month);
-        string = string.replace("yyyy",date.year>999 ? date.year : 1000);
-        string = string.replace("yy",(date.year+"").substr(2));
-        string = string.replace("MM",MonthName[date.month-1]);
+        
+        string = string.replace("mm",(date.month<10)? "0"+date.month : date.month)
+                       .replace("yyyy",date.year>999 ? date.year : 1000)
+                       .replace("yy",(date.year+"").substr(2))
+                       .replace("MM",MonthName[date.month-1]);
         return string;
     }
     /*
      * Renders view of datepicker by parametrs and ranges. 
      */
     function renderPicker(animation){
-        options = Datepicker.status.currOpt; //Current option
-        date = options.date; //Current options date
-        selectedDate = parseDate(Datepicker.status.elem.datepickerOpts.dateFormat,Datepicker.status.elem.value); //Date, that is currently in field
+        var options = Datepicker.status.currOpt, //Current option
+            date = options.date, //Current options date
+            selectedDate = parseDate(Datepicker.status.elem.datepickerOpts.dateFormat,Datepicker.status.elem.value); //Date, that is currently in field
         
         /*
          * Creates td and th elements
          */
         function td(data, className){
-            el = document.createElement('td');
+            var el = document.createElement('td');
             if(className !== undefined && className !== '')
                 el.className =  className;
             el.innerHTML = data;
@@ -335,7 +329,7 @@ var Datepicker = (function(){
             return el;
         }
         function th(data, className){
-            el = document.createElement('th');
+            var el = document.createElement('th');
             if(className !== undefined && className !== '')
                 el.className =  className;
             el.innerHTML = data;
@@ -347,16 +341,16 @@ var Datepicker = (function(){
             /*
              * Dangerous for coder to explore this part. Too many indian styled solutions 
              */
-            monthParam = monthParams(date.month,date.year);
+            var monthParam = monthParams(date.month,date.year);
             table.className = 'pick-days';
             document.querySelector("#pick-range").innerHTML = MonthName[date.month-1]+", "+date.year;
             
-            thead = document.createElement('thead');
-            tr = document.createElement('tr');    
-            
-            firstDay = (options.firstDay === 'Mon') ? 1 : 0;
-            lastDay = firstDay===1?8:7;
-            monthDay = monthParam.startDay;
+            var thead = document.createElement('thead'),
+                tr = document.createElement('tr'),
+                
+            firstDay = (options.firstDay === 'Mon') ? 1 : 0,
+            lastDay = firstDay===1?8:7,
+            monthDay = monthParam.startDay,
             endDay = monthParam.endDay;
                         
             if(lastDay === 8 && endDay === 0)
@@ -364,26 +358,24 @@ var Datepicker = (function(){
             if(lastDay === 8 && monthDay === 0)
                 monthDay = 7;
             
-            for(i=firstDay;i<lastDay;i++){
-                d=(i!==7)?i:0;
-                data = weekDays[d].substr(0,2);
-                tr.appendChild(th(data,''));
+            for(var i=firstDay;i<lastDay;i++){
+                var d=(i!==7)?i:0;
+                tr.appendChild(th(weekDays[d].substr(0,2),''));
                 thead.appendChild(tr);
             }
             table.appendChild(thead);
             
-            prevMonthStart = monthParam.prevDaysNum - (monthDay-firstDay)+1;
-            
-            tbody = document.createElement('tbody');
-            tr = document.createElement('tr');
-            prevM = nextM = false;
-            for(i=0;i<(monthDay-firstDay)+1+monthParam.daysNum;i++){
+            var prevMonthStart = monthParam.prevDaysNum - (monthDay-firstDay)+1,
+                tbody = document.createElement('tbody'),
+                tr = document.createElement('tr'),
+                prevM = nextM = false;
+        
+            for(var i=0;i<(monthDay-firstDay)+1+monthParam.daysNum;i++){
                 if(i%7 === 0){
                     tr = document.createElement('tr');
                 }
                 if(!prevM){
-                    for(d=prevMonthStart;d<monthParam.prevDaysNum+1;d++){
-                        data = d;
+                    for(var data=prevMonthStart;data<monthParam.prevDaysNum+1;data++){
                         className = 'pick-prevM';
                         tr.appendChild(td(data,className));
                         i++;
@@ -412,7 +404,7 @@ var Datepicker = (function(){
             document.querySelector("#pick-range").innerHTML = date.year;
             table.className = 'pick-month';
             tbody = document.createElement('tbody');
-            for(key in MonthName){
+            for(var key in MonthName){
                 if(key%3 === 0){
                     tr = document.createElement('tr');
                 }
@@ -430,12 +422,11 @@ var Datepicker = (function(){
             document.querySelector("#pick-range").innerHTML = decade.start+"-"+decade.end;
             table.className = 'power-rangers';
             tbody = document.createElement('tbody');
-            for(i=0;i<16;i++){
+            for(var i=0;i<16;i++){
                 if(i%4 === 0){
                     tr = document.createElement('tr');
                 }
                 data = decade.start+i;
-                //Highlighting of selected year
                 className = (decade.start+i === selectedDate.year) ? 'pick-current' : '';
                 tr.appendChild(td(data,className));
                 tbody.appendChild(tr);
@@ -490,7 +481,7 @@ var Datepicker = (function(){
      * @returns {day,month,year} "now" date
      */
     function today(){
-        tday = new Date();
+        var tday = new Date();
         return {
             day: tday.getDate(),
             month: tday.getMonth()+1,
@@ -504,7 +495,7 @@ var Datepicker = (function(){
      * @param {object} datepicker options
      */
     public.set = function(element, options){
-        elems = document.querySelectorAll(element);
+        var elems = document.querySelectorAll(element);
         options.dateFormat = options.dateFormat !== undefined ? options.dateFormat : 'dd/mm/yyyy';
         options.range = options.range !== undefined ? options.range : 'Day';
         
@@ -521,7 +512,7 @@ var Datepicker = (function(){
                 elems[i].removeEventListener("focus", Datepicker.show);
                 elems[i].removeEventListener("click", Datepicker.show);
                 
-                btn = document.createElement("span");
+                var btn = document.createElement("span");
                 btn.className = 'pick-date-ico';
                 //btn = elems[i].nextElementSibling;
                 btn.dateButton = true;
@@ -539,8 +530,8 @@ var Datepicker = (function(){
         if(Datepicker.status.focus === true)
             return;
         
-        element = (e.target.dateButton === true) ? e.target.previousElementSibling : e.target;
-        options = element.datepickerOpts;
+        var element = (e.target.dateButton === true) ? e.target.previousElementSibling : e.target,
+            options = element.datepickerOpts;
         element.focus();
         Datepicker.status = {
             elem:element,
@@ -549,7 +540,7 @@ var Datepicker = (function(){
         };
         
         if(element.value.length > 0){
-           selectedDate = parseDate(options.dateFormat,element.value);
+           var selectedDate = parseDate(options.dateFormat,element.value);
            if(selectedDate.year < 1000){
                selectedDate.year = 1000;
                element.value = stringDate(options.dateFormat, selectedDate);
@@ -572,7 +563,7 @@ var Datepicker = (function(){
         Datepicker.status.currOpt.date = JSON.parse(JSON.stringify(selectedDate));
         renderPicker();
         
-        datePosition = element.getBoundingClientRect();
+        var datePosition = element.getBoundingClientRect();
         document.querySelector("#picknic-date").style.display = 'block';
         document.querySelector("#picknic-date").style.top = datePosition.bottom+5+'px';
         document.querySelector("#picknic-date").style.left = datePosition.left+'px';
@@ -720,15 +711,51 @@ var Datepicker = (function(){
             }
             else if(/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type==="month"){
                 e.preventDefault();
+                
+                
+                    
                 if(partUnder.cursorPos === 0){
                     field.value = stringDate(field.datepickerOpts.dateFormat,{day:typedDate.day,month:-1,year:typedDate.year}).replace("undefined","");
                     field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode)+field.value.substr(selectStart);
+                    overlay = document.createElement("div");
+                    overlay.className = "picknic-overlay";
+                    //overlay.contentEditable = true;
+                    overlayPos = field.getBoundingClientRect();
+                    overlay.style.cssText = window.getComputedStyle(field, "").cssText;
+                    overlay.background="none";
+                    overlay.style.position = "absolute";
+                    overlay.style.top = overlayPos.top+10+"px";
+                    overlay.style.left = overlayPos.left+"px";
+                    overlay.style.zIndex = "1";
+                    
+                    
+                    
+                    overlay.innerHTML = field.value.substr(0,selectStart+1)+'<span style="color:#ebebeb">'+monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month)+"</span>"+field.value.substr(selectStart+1);
+                    
+                    overlay.addEventListener("click",function(e){
+                        e.target.nextElementSibling.focus();
+                    });
+                    removeOverlay = function(e){
+                        e.target.removeEventListener("blur",removeOverlay);
+                        document.querySelector(".picknic-overlay").parentNode.removeChild(document.querySelector(".picknic-overlay"));
+                    };
+                    field.addEventListener("blur",removeOverlay);
+                    field.parentNode.insertBefore(overlay,field);
+                    /*field.style.width = "0";
+                    field.style.height = "0";
+                    field.style.margin = "-100%";
+                    field.style.padding = "-100%";
+                    field.style.clip = "rect(0,0,0,0)";*/
+                    
                 }
                 else{
                     field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode).toLowerCase()+field.value.substr(selectStart);
+                    overlay.innerHTML = field.value;
                 }
-                field.setSelectionRange(selectStart+1, selectEnd+1);
+                
                 anim="";
+                field.value = field.value.substr(0,selectStart+1)+monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month)+field.value.substr(selectStart+1);
+                field.setSelectionRange(selectStart+1, selectEnd+1);
                 console.log(parseDate(field.datepickerOpts.dateFormat,field.value,false));
             }
             if(field.value.length === maxLength(field.datepickerOpts.dateFormat)){
