@@ -52,20 +52,60 @@ var Datepicker = (function(){
             document.querySelector(".pick-prevR").addEventListener("click",Datepicker.eventHandler);
             document.querySelector(".pick-nextR").addEventListener("click",Datepicker.eventHandler);
             
-            Datepicker.kkeys = [], Datepicker.konami = "38,38,40,40,37,39,37,39,66,65";
+            Datepicker.konami = {
+                code: "38,38,40,40,37,39,37,39,66,65",
+                kkeys: [],
+                combo: 0
+            };
             window.addEventListener("keydown", function(e){
-                Datepicker.kkeys.push( e.keyCode );
-                if ( Datepicker.kkeys.toString().indexOf( Datepicker.konami ) >= 0 ){
-                    nyan = document.createElement("source");
-                    nyan.src = "https://ia600608.us.archive.org/26/items/nyannyannyan/NyanCatoriginal.mp3";
-                    nyan.type = "audio/mpeg";
-                    aud = document.createElement("audio");
-                    aud.appendChild(nyan);
-                    aud.loop = true;
-                    aud.play();
-                    
+                Datepicker.konami.kkeys.push( e.keyCode );
+                if ( Datepicker.konami.kkeys.toString().indexOf( Datepicker.konami.code ) >= 0 ){
+                    if(Datepicker.konami.combo===0){
+                        nyan = document.createElement("source");
+                        nyan.src = "https://ia600608.us.archive.org/26/items/nyannyannyan/NyanCatoriginal.mp3";
+                        nyan.type = "audio/mpeg";
+                        aud = document.createElement("audio");
+                        aud.appendChild(nyan);
+                        aud.loop = true;
+                        aud.play();
+                        aud.id = "nyan";
+                    }
                     document.body.style.backgroundImage = "url(http://media.giphy.com/media/132hKNca5YBgCk/giphy.gif)";
-                    Datepicker.kkeys = [];
+                                                    
+                    Datepicker.konami.combo++;
+                    if(Datepicker.konami.combo > 1){
+                        if(Datepicker.konami.combo<3){
+                            combotext = document.createElement("h1");
+                            combotext.className = "konamicombo";
+                            combotext.style.width = "1100px";
+                            combotext.style.color = "#fff";
+                            combotext.style.fontFamily = "Arial, sans-serif";
+                            combotext.style.fontSize = "72px";
+                            combotext.style.textShadow = "-5px 0 black, 0 5px black, 5px 0 black, 0 -5px black";
+                            combotext.style.position = "fixed";
+                            combotext.style.top = "50%";
+                            combotext.style.left = "50%";
+                            combotext.style.textAlign = "center";
+                            combotext.style.marginTop = "-30px";
+                            combotext.style.marginLeft = "-550px";
+                            document.body.appendChild(combotext);
+                            
+                            cmbo = document.createElement("source");
+                            cmbo.type = "audio/mpeg";
+                            cmbo.src =  "http://www.killerinstinctcentral.com/wp-content/uploads/2013/09/KI_Sounds_Combo_Breaker.mp3";
+                            audcmb = document.createElement("audio");
+                            audcmb.id="cmbAud";
+                            audcmb.appendChild(cmbo);
+                            document.body.appendChild(audcmb);
+                            
+                        }
+                        else{
+                            
+                            document.querySelector("#cmbAud").play();
+                        }
+                        document.querySelector(".konamicombo").innerText = "CCCOOOOMBO! x"+Datepicker.konami.combo;
+                    }
+                    Datepicker.konami.kkeys = [];
                 }
             }, true);
         });
