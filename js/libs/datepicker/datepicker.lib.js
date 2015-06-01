@@ -861,12 +861,19 @@ var Datepicker = (function(){
                 break;
             case "pick-prevM":
                 newDay = evBtn.innerText;
-                field.value = stringDate(field.datepickerOpts.dateFormat,{day:parseInt(newDay),month:Datepicker.status.currOpt.date.month-1,year:Datepicker.status.currOpt.date.year});
+                if(Datepicker.status.currOpt.date.year>1000)
+                    field.value = stringDate(field.datepickerOpts.dateFormat,{day:parseInt(newDay),month:Datepicker.status.currOpt.date.month-1,year:Datepicker.status.currOpt.date.year});
+                else
+                    field.value = stringDate(field.datepickerOpts.dateFormat,{day:1,month:1,year:1000});
                 Datepicker.hide();
                 break;
             case "pick-nextM":
                 newDay = evBtn.innerText;
-                field.value = stringDate(field.datepickerOpts.dateFormat,{day:parseInt(newDay),month:Datepicker.status.currOpt.date.month+1,year:Datepicker.status.currOpt.date.year});
+                if(Datepicker.status.currOpt.date.year<9999)
+                    field.value = stringDate(field.datepickerOpts.dateFormat,{day:parseInt(newDay),month:Datepicker.status.currOpt.date.month+1,year:Datepicker.status.currOpt.date.year});
+                else
+                    field.value = stringDate(field.datepickerOpts.dateFormat,{day:31,month:12,year:9999});
+                
                 Datepicker.hide();
                 break;
             case "pick-today":

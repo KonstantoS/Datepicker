@@ -20,8 +20,9 @@
             </p>
             <pre>
 Datepicker.set(".dateField",{
-    range: "Month"
-});    
+    range: "Month",
+    defaultDate: "today"
+});   
             </pre>
             Here is two independent fields:<br>
             <input type="text" class="dateField">
@@ -33,7 +34,8 @@ Datepicker.set(".dateField",{
             <pre>
 Datepicker.set(".yearRanged",{
     range: "Year",
-    dateFormat: "yyyyddmm"
+    dateFormat: "dd, MM yyyy",
+    defaultDate: "20, May 2015"            
 });    
             </pre>
             <input type="text" class="yearRanged" value='20152005'>
@@ -43,10 +45,11 @@ Datepicker.set(".yearRanged",{
             <p>That one has: other date format (ex: 20, May 2015), datepicker activates by button. First day is Monday.</p>
             <pre>
 Datepicker.set("#uniqueDatepicker",{
+    range: "Day", 
     dateFormat: "dd, MM yyyy", 
     button: true,
     firstDay: "Mon"
-});    
+});   
             </pre>
             <input type="text" class="dateField" id="uniqueDatepicker">
         </div>
