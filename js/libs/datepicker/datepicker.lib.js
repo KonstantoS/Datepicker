@@ -616,6 +616,7 @@ var Datepicker = (function(){
             }
             else if(e.keyCode === 9 && partUnder.type === "month" && Math.abs(selectEnd-selectStart)!==0 ){
                 e.preventDefault();
+                removeSuggestion(e);
                 field.setSelectionRange(selectEnd,selectEnd);
             }
             
