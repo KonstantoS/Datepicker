@@ -6,6 +6,7 @@
     dateFormat: "dd, MM yyyy", //Could be almost anything you like using (dd|mm|yyyy|MM) ex: (dd-mm-yyyy | d, MM yyyy),
     button: true|false, //Using sibling button or just by focus on field
     firstDay: "Mon|Sun" 
+    defaultDay: "today | date by format"
  *
  */
 var Datepicker = (function(){
@@ -269,11 +270,11 @@ var Datepicker = (function(){
         return {type:type,cursorPos:result[type].indexOf("¦")};
     }
     function monthEnd(wordStart){
-        for(var i=0; i<MonthName; i++){
+        for(var i=0; i<MonthName.length; i++){
             if(RegExp("^"+wordStart).test(MonthName[i]))
-                break;
+                return MonthName[i].substr(wordStart.length);
         }
-        return MonthName[i].substr(wordStart.length);
+        return "";
     }
     function maxLength(pattern){
         return pattern.replace(/MM/,"September").length; //Just because "September" is the longest :3
@@ -503,6 +504,10 @@ var Datepicker = (function(){
             elems[i].addEventListener("blur", Datepicker.hide);
             elems[i].addEventListener("keydown",Datepicker.eventHandler);
             elems[i].addEventListener("keyup",Datepicker.eventHandler);
+            if(typeof options.defaultDate === "string")
+                elems[i].value = (options.defaultDate === "today") ? stringDate(options.dateFormat,today()) : options.defaultDate;
+            else
+                elems[i].value = "";
             //For "onfocus" call
             if(elems[i].datepickerOpts === undefined && options.button === undefined){
                 elems[i].addEventListener("focus", Datepicker.show);
@@ -621,7 +626,7 @@ var Datepicker = (function(){
                                     typedDate.month = 1;
                                     if(typedDate.year<10000){
                                         typedDate.year++;
-                                        if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                        if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                             anim = "shiftLeft";
                                     }
                                 }
@@ -635,7 +640,7 @@ var Datepicker = (function(){
                                 typedDate.month = 1;
                                 if(typedDate.year<10000){
                                     typedDate.year++;
-                                    if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftLeft";
                                 }
                             }
@@ -644,8 +649,8 @@ var Datepicker = (function(){
                             if(partUnder.cursorPos>0){
                                 if(typedDate.year+Math.pow(10,(4-partUnder.cursorPos))<10000){
                                     typedDate.year += Math.pow(10,(4-partUnder.cursorPos));
-                                    if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
-                                    anim = "shiftLeft";
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
+                                        anim = "shiftLeft";
                                 }
                             }
                             
@@ -672,7 +677,7 @@ var Datepicker = (function(){
                                     typedDate.month = 12;
                                     if(typedDate.year>1000){
                                         typedDate.year--;
-                                        if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                        if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                             anim = "shiftRight";
                                     }
                                 }
@@ -686,7 +691,7 @@ var Datepicker = (function(){
                                 typedDate.month = 12;
                                 if(typedDate.year>1000){
                                     typedDate.year--;
-                                    if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftRight";
                                 }
                             }
@@ -695,7 +700,7 @@ var Datepicker = (function(){
                             if(partUnder.cursorPos>0 && typedDate.year>1000){
                                 if(typedDate.year-Math.pow(10,(4-partUnder.cursorPos)>999)){
                                     typedDate.year -= Math.pow(10,(4-partUnder.cursorPos));
-                                    if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month"))
+                                    if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftRight";
                                 }
                             }
@@ -710,53 +715,52 @@ var Datepicker = (function(){
                 return;
             }
             else if(/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type==="month"){
-                e.preventDefault();
-                
-                
-                    
+                /*e.preventDefault(); Just not for commit
+                 
                 if(partUnder.cursorPos === 0){
                     field.value = stringDate(field.datepickerOpts.dateFormat,{day:typedDate.day,month:-1,year:typedDate.year}).replace("undefined","");
                     field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode)+field.value.substr(selectStart);
+                    
                     overlay = document.createElement("div");
                     overlay.className = "picknic-overlay";
-                    //overlay.contentEditable = true;
+                    overlay.contentEditable = true;
                     overlayPos = field.getBoundingClientRect();
-                    overlay.style.cssText = window.getComputedStyle(field, "").cssText;
-                    overlay.background="none";
+                    overlay.style.cssText = window.getComputedStyle(field).cssText;
+                    
+                    overlay.style.webkitTextFillColor = "initial";
+                    overlay.backgroundColor="transparent";
                     overlay.style.position = "absolute";
-                    overlay.style.top = overlayPos.top+10+"px";
+                    overlay.style.top = overlayPos.top+"px";
                     overlay.style.left = overlayPos.left+"px";
-                    overlay.style.zIndex = "1";
+                    overlay.style.zIndex = "-1";
+                                            
+                    overlay.innerHTML = field.value.substr(0,selectStart+1)+'<span style="color:red;">'+monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month)+"</span>"+field.value.substr(selectStart+1);
                     
-                    
-                    
-                    overlay.innerHTML = field.value.substr(0,selectStart+1)+'<span style="color:#ebebeb">'+monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month)+"</span>"+field.value.substr(selectStart+1);
                     
                     overlay.addEventListener("click",function(e){
-                        e.target.nextElementSibling.focus();
+                        //e.target.nextElementSibling.focus();
                     });
                     removeOverlay = function(e){
                         e.target.removeEventListener("blur",removeOverlay);
-                        document.querySelector(".picknic-overlay").parentNode.removeChild(document.querySelector(".picknic-overlay"));
+                        //document.querySelector(".picknic-overlay").parentNode.removeChild(document.querySelector(".picknic-overlay"));
                     };
                     field.addEventListener("blur",removeOverlay);
                     field.parentNode.insertBefore(overlay,field);
+                    
                     /*field.style.width = "0";
                     field.style.height = "0";
                     field.style.margin = "-100%";
                     field.style.padding = "-100%";
-                    field.style.clip = "rect(0,0,0,0)";*/
+                    field.style.clip = "rect(0,0,0,0)";//
                     
                 }
                 else{
                     field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode).toLowerCase()+field.value.substr(selectStart);
-                    overlay.innerHTML = field.value;
                 }
                 
                 anim="";
-                field.value = field.value.substr(0,selectStart+1)+monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month)+field.value.substr(selectStart+1);
-                field.setSelectionRange(selectStart+1, selectEnd+1);
-                console.log(parseDate(field.datepickerOpts.dateFormat,field.value,false));
+                overlay.innerHTML = field.value.substr(0,selectStart+1)+'<span style="color:#ebebeb">'+monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month)+"</span>"+field.value.substr(selectStart+1);
+                field.setSelectionRange(selectStart+1, selectEnd+1);*/
             }
             if(field.value.length === maxLength(field.datepickerOpts.dateFormat)){
                 if(textSymbols().indexOf(e.keyCode)>=0 && (selectStart-selectEnd)===0)

@@ -57,10 +57,12 @@ Datepicker.set("#uniqueDatepicker",{
     <script type="text/javascript">
         Datepicker.set(".dateField",{
             range: "Month" // Could be (Day/Month/Year)
+            ,defaultDate: "today"
         });
         Datepicker.set(".yearRanged",{
             range: "Year",
-            dateFormat: "yyyyddmm"
+            dateFormat: "dd, MM yyyy",
+            defaultDate: "20, May 2015"            
         });
         Datepicker.set("#uniqueDatepicker",{
             range: "Day", 
