@@ -647,7 +647,7 @@ var Datepicker = (function(){
                             break;
                         case "year":
                             if(partUnder.cursorPos>0){
-                                if(typedDate.year+Math.pow(10,(4-partUnder.cursorPos))<9999){
+                                if(typedDate.year+Math.pow(10,(4-partUnder.cursorPos))<10000){
                                     typedDate.year += Math.pow(10,(4-partUnder.cursorPos));
                                     if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftLeft";
