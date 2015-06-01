@@ -49,3 +49,11 @@ pre{
     padding: 5px;
     color:#5a5b5f;
 }
+.konami{
+    width:100px;
+    position:absolute;
+    bottom:0;
+    left:50%;
+    right:50%;
+    margin-left:-50px;
+}
