@@ -290,9 +290,9 @@ var Datepicker = (function(){
         return arr;
     }
     function removeSuggestion(e){
-        e.target.className = e.target.className.replace(/\spick-suggestion/,"");
-        if(e.type === "blur" || e.keyCode === 37)
+        if(e.type === "blur" || (e.keyCode === 37 && /\spick-suggestion/.test(e.target.className)))
             e.target.setRangeText("");
+        e.target.className = e.target.className.replace(/\spick-suggestion/,"");
     };
     /*
      * Stringifies date by preseted pattern
