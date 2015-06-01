@@ -624,7 +624,7 @@ var Datepicker = (function(){
                                 }
                                 else{
                                     typedDate.month = 1;
-                                    if(typedDate.year<10000){
+                                    if(typedDate.year<9999){
                                         typedDate.year++;
                                         if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                             anim = "shiftLeft";
@@ -638,7 +638,7 @@ var Datepicker = (function(){
                             }
                             else{
                                 typedDate.month = 1;
-                                if(typedDate.year<10000){
+                                if(typedDate.year<9999){
                                     typedDate.year++;
                                     if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftLeft";
@@ -647,7 +647,7 @@ var Datepicker = (function(){
                             break;
                         case "year":
                             if(partUnder.cursorPos>0){
-                                if(typedDate.year+Math.pow(10,(4-partUnder.cursorPos))<10000){
+                                if(typedDate.year+Math.pow(10,(4-partUnder.cursorPos))<9999){
                                     typedDate.year += Math.pow(10,(4-partUnder.cursorPos));
                                     if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftLeft";
@@ -805,20 +805,25 @@ var Datepicker = (function(){
             case "pick-prevR":
                 switch (Datepicker.status.currOpt.range){
                     case "Day":
-                        if(Datepicker.status.currOpt.date.month > 1){
-                            Datepicker.status.currOpt.date.month -= 1;
-                        }
-                        else{
-                            Datepicker.status.currOpt.date.month = 12;
-                            Datepicker.status.currOpt.date.year -= 1;
+                        if(Datepicker.status.currOpt.date.year > 1000){
+                            if(Datepicker.status.currOpt.date.month > 1){
+                                Datepicker.status.currOpt.date.month -= 1;
+                            }
+                            else{
+                                Datepicker.status.currOpt.date.month = 12;
+                                Datepicker.status.currOpt.date.year -= 1;
+                            }
                         }
                         break;
                     case "Month":
-                        Datepicker.status.currOpt.date.year -= 1;
+                        if(Datepicker.status.currOpt.date.year > 1000)
+                            Datepicker.status.currOpt.date.year -= 1;
                         break;
                     case "Year":
                         decade = getDecade(Datepicker.status.currOpt.date.year);
-                        Datepicker.status.currOpt.date.year = decade.start-16;
+                        if(decade.start > 1000){
+                            Datepicker.status.currOpt.date.year = decade.start-16;
+                        }
                         break;
                 }
                 renderPicker("shiftRight");
@@ -826,20 +831,25 @@ var Datepicker = (function(){
             case "pick-nextR":
                 switch (Datepicker.status.currOpt.range){
                     case "Day":
-                        if(Datepicker.status.currOpt.date.month < 12){
-                            Datepicker.status.currOpt.date.month += 1;
-                        }
-                        else{
-                            Datepicker.status.currOpt.date.month = 1;
-                            Datepicker.status.currOpt.date.year += 1;
+                        if(Datepicker.status.currOpt.date.year < 9999){
+                            if(Datepicker.status.currOpt.date.month < 12){
+                                Datepicker.status.currOpt.date.month += 1;
+                            }
+                            else{
+                                Datepicker.status.currOpt.date.month = 1;
+                                Datepicker.status.currOpt.date.year += 1;
+                            }
                         }
                         break;
                     case "Month":
-                        Datepicker.status.currOpt.date.year += 1;
+                        if(Datepicker.status.currOpt.date.year < 9999)
+                            Datepicker.status.currOpt.date.year += 1;
                         break;
                     case "Year":
                         decade = getDecade(Datepicker.status.currOpt.date.year);
-                        Datepicker.status.currOpt.date.year = decade.end+16;
+                        if(decade.end < 9999){
+                            Datepicker.status.currOpt.date.year = decade.end+16;
+                        }
                         break;
                     
                 }
