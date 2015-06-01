@@ -289,6 +289,11 @@ var Datepicker = (function(){
             arr.push(i);
         return arr;
     }
+    function removeSuggestion(e){
+        e.target.className = e.target.className.replace(/\spick-suggestion/,"");
+        if(e.type === "blur" || e.keyCode === 37)
+            e.target.setRangeText("");
+    };
     /*
      * Stringifies date by preseted pattern
      * 
@@ -504,6 +509,7 @@ var Datepicker = (function(){
             elems[i].addEventListener("blur", Datepicker.hide);
             elems[i].addEventListener("keydown",Datepicker.eventHandler);
             elems[i].addEventListener("keyup",Datepicker.eventHandler);
+            elems[i].addEventListener("keypress",Datepicker.eventHandler);
             if(typeof options.defaultDate === "string")
                 elems[i].value = (options.defaultDate === "today") ? stringDate(options.dateFormat,today()) : options.defaultDate;
             else
@@ -590,18 +596,29 @@ var Datepicker = (function(){
      * Detects controller and does action
      */
     public.eventHandler = function(e){
-        if(e.type === 'keydown' && e.keyCode !== 37 && e.keyCode!== 39){
-            if(e.keyCode === 13){
-                Datepicker.hide();
-                return;
-            }
+                  
+        if(e.type === 'keydown'){
             field = e.target;
-             
+        
             typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
             var selectStart = field.selectionStart,
                 selectEnd = field.selectionEnd; 
             partUnder = getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart);
             field.datepickerOpts.LastValidDateStr = field.value;
+            
+            if(e.keyCode === 13){
+                Datepicker.hide();
+                return;
+            }
+            else if(e.keyCode === 37 || e.keyCode === 39){
+                removeSuggestion(e);
+                return;
+            }
+            else if(e.keyCode === 9 && partUnder.type === "month" && Math.abs(selectEnd-selectStart)!==0 ){
+                e.preventDefault();
+                field.setSelectionRange(selectEnd,selectEnd);
+            }
+            
             
             if((e.keyCode === 38 || e.keyCode === 40) && typedDate !== false){
                 e.preventDefault();
@@ -714,55 +731,7 @@ var Datepicker = (function(){
                 renderPicker(anim);
                 return;
             }
-            else if(/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type==="month"){
-                /*e.preventDefault(); Just not for commit
-                 
-                if(partUnder.cursorPos === 0){
-                    field.value = stringDate(field.datepickerOpts.dateFormat,{day:typedDate.day,month:-1,year:typedDate.year}).replace("undefined","");
-                    field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode)+field.value.substr(selectStart);
-                    
-                    overlay = document.createElement("div");
-                    overlay.className = "picknic-overlay";
-                    overlay.contentEditable = true;
-                    overlayPos = field.getBoundingClientRect();
-                    overlay.style.cssText = window.getComputedStyle(field).cssText;
-                    
-                    overlay.style.webkitTextFillColor = "initial";
-                    overlay.backgroundColor="transparent";
-                    overlay.style.position = "absolute";
-                    overlay.style.top = overlayPos.top+"px";
-                    overlay.style.left = overlayPos.left+"px";
-                    overlay.style.zIndex = "-1";
-                                            
-                    overlay.innerHTML = field.value.substr(0,selectStart+1)+'<span style="color:red;">'+monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month)+"</span>"+field.value.substr(selectStart+1);
-                    
-                    
-                    overlay.addEventListener("click",function(e){
-                        //e.target.nextElementSibling.focus();
-                    });
-                    removeOverlay = function(e){
-                        e.target.removeEventListener("blur",removeOverlay);
-                        //document.querySelector(".picknic-overlay").parentNode.removeChild(document.querySelector(".picknic-overlay"));
-                    };
-                    field.addEventListener("blur",removeOverlay);
-                    field.parentNode.insertBefore(overlay,field);
-                    
-                    /*field.style.width = "0";
-                    field.style.height = "0";
-                    field.style.margin = "-100%";
-                    field.style.padding = "-100%";
-                    field.style.clip = "rect(0,0,0,0)";//
-                    
-                }
-                else{
-                    field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode).toLowerCase()+field.value.substr(selectStart);
-                }
-                
-                anim="";
-                overlay.innerHTML = field.value.substr(0,selectStart+1)+'<span style="color:#ebebeb">'+monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month)+"</span>"+field.value.substr(selectStart+1);
-                field.setSelectionRange(selectStart+1, selectEnd+1);*/
-            }
-            if(field.value.length === maxLength(field.datepickerOpts.dateFormat)){
+            else if(field.value.length === maxLength(field.datepickerOpts.dateFormat) && !/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type!=="month"){
                 if(textSymbols().indexOf(e.keyCode)>=0 && (selectStart-selectEnd)===0)
                     e.preventDefault();
             }
@@ -784,6 +753,40 @@ var Datepicker = (function(){
                 field.setSelectionRange(start, end);
             }
             return;
+        }
+        else if(e.type === "keypress"){
+            typedDate = parseDate(field.datepickerOpts.dateFormat,field.value);
+            var selectStart = field.selectionStart,
+                selectEnd = field.selectionEnd; 
+            partUnder = getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart);
+            field.datepickerOpts.LastValidDateStr = field.value;
+            
+            if(/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type==="month"){
+                e.preventDefault(); 
+                
+                //Suggestion highlight
+                field.className = field.className + " pick-suggestion";                     
+                field.addEventListener("blur",removeSuggestion);
+                    
+                if(partUnder.cursorPos === 0){
+                    if(typedDate !== false)
+                        field.value = stringDate(field.datepickerOpts.dateFormat,{day:typedDate.day,month:-1,year:typedDate.year}).replace("undefined","");
+                    else
+                        field.value = field.datepickerOpts.LastValidDateStr;
+                    //Big letter on word start
+                    field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode)+field.value.substr(selectStart);
+                    
+                }
+                else{                    
+                    field.setRangeText("");
+                    field.value = field.value.substr(0,selectStart)+String.fromCharCode(e.keyCode).toLowerCase()+field.value.substr(selectStart);
+                }
+                
+                //anim="";
+                var monthEnding = monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month);
+                field.value = field.value.substr(0,selectStart+1)+monthEnding+field.value.substr(selectStart+1);
+                field.setSelectionRange(selectStart+1, selectStart+1+monthEnding.length);
+            }
         }
         evBtn = e.target;
         field = Datepicker.status.elem;

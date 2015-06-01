@@ -144,3 +144,7 @@
     background-size: contain;
     cursor:pointer;
 }
+.pick-suggestion::selection{
+    background:transparent;
+    color:#989898;
+}
