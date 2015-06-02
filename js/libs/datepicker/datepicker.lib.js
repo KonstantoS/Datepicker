@@ -269,6 +269,11 @@ var Datepicker = (function(){
         }
         return {type:type,cursorPos:result[type].indexOf("¦")};
     }
+    /*
+     * Compleating month name. Returns ending of it
+     * @param {type} wordStart startn of month name
+     * @returns {String}
+     */
     function monthEnd(wordStart){
         for(var i=0; i<MonthName.length; i++){
             if(RegExp("^"+wordStart).test(MonthName[i]))
@@ -292,8 +297,8 @@ var Datepicker = (function(){
     function removeSuggestion(e){
         if(e.type === "blur" || (e.keyCode === 37 && /\spick-suggestion/.test(e.target.className)) || e.type === "click"){
             e.target.setRangeText("");
-            e.targer.removeEventListener("blur",removeSuggestion);
-            e.targer.removeEventListener("click",removeSuggestion);
+            e.target.removeEventListener("blur",removeSuggestion);
+            e.target.removeEventListener("click",removeSuggestion);
         }
         e.target.className = e.target.className.replace(/\spick-suggestion/,"");
         
@@ -767,10 +772,8 @@ var Datepicker = (function(){
                 selectEnd = field.selectionEnd; 
             partUnder = getTypeUnderCursor(field.datepickerOpts.dateFormat,field.value,selectStart);
             field.datepickerOpts.LastValidDateStr = field.value;
-            
-            if(/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type==="month"){
+            if(/MM/.test(field.datepickerOpts.dateFormat) && partUnder.type==="month"){
                 e.preventDefault(); 
-                
                 //Suggestion highlight
                 field.className = field.className + " pick-suggestion";                     
                 field.addEventListener("blur",removeSuggestion);
@@ -791,6 +794,7 @@ var Datepicker = (function(){
                 
                 //anim="";
                 var monthEnding = monthEnd(parseDate(field.datepickerOpts.dateFormat,field.value,false).month);
+                
                 field.value = field.value.substr(0,selectStart+1)+monthEnding+field.value.substr(selectStart+1);
                 field.setSelectionRange(selectStart+1, selectStart+1+monthEnding.length);
             }
