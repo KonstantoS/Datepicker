@@ -182,6 +182,8 @@ var Datepicker = (function(){
                 month = index + 1;
             }
             month = Math.clamp(+month, 1, 12);
+            if(parseInt(month) !== month)
+                return false;
         }                
 
         //Getting year
@@ -767,7 +769,7 @@ var Datepicker = (function(){
                 renderPicker(anim);
                 return;
             }
-            else if(field.value.length === maxLength(field.datepickerOpts.dateFormat) && !/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type!=="month"){
+            else if(field.value.length === maxLength(field.datepickerOpts.dateFormat) /*&& !/MM/.test(field.datepickerOpts.dateFormat) && textSymbols().indexOf(e.keyCode)>=0 && partUnder.type!=="month"*/){
                 if(textSymbols().indexOf(e.keyCode)>=0 && (selectStart-selectEnd)===0)
                     e.preventDefault();
             }
