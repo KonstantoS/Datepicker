@@ -34,8 +34,8 @@ Datepicker.set(".dateField",{
             <pre>
 Datepicker.set(".yearRanged",{
     range: "Year",
-    dateFormat: "dd, MM yyyy",
-    defaultDate: "20, May 2015"            
+    dateFormat: "ddmmyyyy",
+    defaultDate: "20052015"            
 });    
             </pre>
             <input type="text" class="yearRanged" value='20152005'>
@@ -60,13 +60,13 @@ Datepicker.set("#uniqueDatepicker",{
     
     <script type="text/javascript">
         Datepicker.set(".dateField",{
-            range: "Month" // Could be (Day/Month/Year)
-            ,defaultDate: "today"
+            range: "Month", // Could be (Day/Month/Year)
+            defaultDate: "today"
         });
         Datepicker.set(".yearRanged",{
             range: "Year",
-            dateFormat: "dd, MM yyyy",
-            defaultDate: "20, May 2015"            
+            dateFormat: "ddmmyyyy",
+            defaultDate: "20052015"            
         });
         Datepicker.set("#uniqueDatepicker",{
             range: "Day", 

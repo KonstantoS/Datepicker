@@ -290,9 +290,13 @@ var Datepicker = (function(){
         return arr;
     }
     function removeSuggestion(e){
-        if(e.type === "blur" || (e.keyCode === 37 && /\spick-suggestion/.test(e.target.className)))
+        if(e.type === "blur" || (e.keyCode === 37 && /\spick-suggestion/.test(e.target.className)) || e.type === "click"){
             e.target.setRangeText("");
+            e.targer.removeEventListener("blur",removeSuggestion);
+            e.targer.removeEventListener("click",removeSuggestion);
+        }
         e.target.className = e.target.className.replace(/\spick-suggestion/,"");
+        
     };
     /*
      * Stringifies date by preseted pattern
@@ -432,7 +436,7 @@ var Datepicker = (function(){
                 if(i%4 === 0){
                     tr = document.createElement('tr');
                 }
-                data = decade.start+i;
+                data = decade.start+i > 999 ? decade.start+i : "1000";
                 className = (decade.start+i === selectedDate.year) ? 'pick-current' : '';
                 tr.appendChild(td(data,className));
                 tbody.appendChild(tr);
@@ -768,7 +772,7 @@ var Datepicker = (function(){
                 //Suggestion highlight
                 field.className = field.className + " pick-suggestion";                     
                 field.addEventListener("blur",removeSuggestion);
-                    
+                field.addEventListener("click",removeSuggestion);    
                 if(partUnder.cursorPos === 0){
                     if(typedDate !== false)
                         field.value = stringDate(field.datepickerOpts.dateFormat,{day:typedDate.day,month:-1,year:typedDate.year}).replace("undefined","");
