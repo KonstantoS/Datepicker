@@ -658,6 +658,10 @@ var Datepicker = (function(){
                                         if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                             anim = "shiftLeft";
                                     }
+                                    else{
+                                        typedDate.year = 1000;
+                                        anim = "shiftRight";
+                                    }
                                 }
                             }
                             break;
@@ -672,14 +676,22 @@ var Datepicker = (function(){
                                     if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftLeft";
                                 }
+                                else{
+                                    typedDate.year = 1000;
+                                    anim = "shiftRight";
+                                }
                             }
                             break;
                         case "year":
                             if(partUnder.cursorPos>0){
-                                if(typedDate.year+Math.pow(10,(4-partUnder.cursorPos))<10000){
+                                if((typedDate.year+Math.pow(10,(4-partUnder.cursorPos)))<10000){
                                     typedDate.year += Math.pow(10,(4-partUnder.cursorPos));
                                     if((Datepicker.status.currOpt.range === "Year" && decadeEnd < typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftLeft";
+                                }
+                                else{
+                                    typedDate.year = 1000;
+                                    anim = "shiftRight";
                                 }
                             }
                             
@@ -709,6 +721,10 @@ var Datepicker = (function(){
                                         if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                             anim = "shiftRight";
                                     }
+                                    else{
+                                        typedDate.year = 9999;
+                                        anim = "shiftLeft";
+                                    }
                                 }
                             }
                             break;
@@ -723,14 +739,22 @@ var Datepicker = (function(){
                                     if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftRight";
                                 }
+                                else{
+                                    typedDate.year = 9999;
+                                    anim = "shiftLeft";
+                                }
                             }
                             break;
                         case "year":
-                            if(partUnder.cursorPos>0 && typedDate.year>1000){
-                                if(typedDate.year-Math.pow(10,(4-partUnder.cursorPos)>999)){
+                            if(partUnder.cursorPos>0){
+                                if((typedDate.year-Math.pow(10,(4-partUnder.cursorPos)))>999){
                                     typedDate.year -= Math.pow(10,(4-partUnder.cursorPos));
                                     if((Datepicker.status.currOpt.range === "Year" && decadeStart > typedDate.year)||(Datepicker.status.currOpt.range === "Month")||(Datepicker.status.currOpt.range === "Day"))
                                         anim = "shiftRight";
+                                }
+                                else{
+                                    typedDate.year = 9999;
+                                    anim = "shiftLeft";
                                 }
                             }
                             
