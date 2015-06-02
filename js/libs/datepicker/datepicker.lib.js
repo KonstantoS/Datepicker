@@ -436,8 +436,10 @@ var Datepicker = (function(){
                 if(i%4 === 0){
                     tr = document.createElement('tr');
                 }
-                data = decade.start+i > 999 ? decade.start+i : "1000";
-                className = (decade.start+i === selectedDate.year) ? 'pick-current' : '';
+                data = decade.start+i;
+
+                className = (decade.start+i > 999) ? (decade.start+i === selectedDate.year) ? 'pick-current' : '' : 'pick-prevM';
+                
                 tr.appendChild(td(data,className));
                 tbody.appendChild(tr);
             }
@@ -864,6 +866,9 @@ var Datepicker = (function(){
                 renderPicker("shiftLeft");
                 break;
             case "pick-prevM":
+                if(Datepicker.status.currOpt.range === "Year")
+                    return;
+                
                 newDay = evBtn.innerText;
                 if(Datepicker.status.currOpt.date.year>1000)
                     field.value = stringDate(field.datepickerOpts.dateFormat,{day:parseInt(newDay),month:Datepicker.status.currOpt.date.month-1,year:Datepicker.status.currOpt.date.year});
