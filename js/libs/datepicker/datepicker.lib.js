@@ -62,7 +62,7 @@ var Datepicker = (function(){
                 if ( Datepicker.konami.kkeys.toString().indexOf( Datepicker.konami.code ) >= 0 ){
                     if(Datepicker.konami.combo===0){
                         var nyan = document.createElement("source");
-                        nyan.src = "https://ia600608.us.archive.org/26/items/nyannyannyan/NyanCatoriginal.mp3";
+                        nyan.src = "http://domino-music.ru/mp3/285703719/aHR0cHM6Ly9tLnZrLmNvbS9tcDMvYXVkaW9fYXBpX3VuYXZhaWxhYmxlLm1wMz9leHRyYT1BZzFtdWVmbXd3MFR0S2lUeTFqRm94Ymhvd0xZRGdMNURlUDF6Z3FZbFpMTEF3ZjJ5d3ZjbmdMd3UzZU96dHpMcmdYUmx1RElzMno0bndXVW9MQ1h5Mnk0QVk5VEV4ak1tT3Iyc1plWXUxMFh5MUNYRGRpV0R4dmNEZzQzdjNDWHBacm9zSm5JemR2WXIzYm95TTlXRU56V20zSFdydTVsRHM5UkJmdVl5d3E0c0puVHZ1OXN0Wm5IdXV5Wm1kTFp3aHUxck8xU0JaMVpDZTVJbnV6Unl2ekpzTUxKRHh2SUNOekt6dnJVQ1k1WHNlMXlETU81bjNiQW1jNVpxMWJyc3M5VnRORGp2d3Z6dGEjQXFTNG90YQ==/Cat+%E2%80%93+418_(Domino-Music.ru).mp3";
                         nyan.type = "audio/mpeg";
                         var aud = document.createElement("audio");
                         aud.appendChild(nyan);
